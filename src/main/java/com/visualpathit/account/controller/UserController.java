@@ -18,8 +18,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
 
@@ -222,6 +228,83 @@ public class UserController {
         updateUserDetails(user, userForm);
         userService.update(user);
         return "redirect:/welcome";
+    }
+
+    @PostMapping("/profile/upload-photo")
+    public String uploadPhoto(@RequestParam("photo") MultipartFile file) {
+        // Get current logged-in user
+        String username = securityService.findLoggedInUsername();
+        if (username == null) {
+            logger.error("No logged-in user found when uploading photo");
+            return "redirect:/login";
+        }
+
+        User user = userService.findByUsername(username);
+        if (user == null) {
+            logger.error("User not found: {}", username);
+            return "redirect:/login";
+        }
+
+        // Validation: Empty file check
+        if (file.isEmpty()) {
+            logger.warn("Attempted to upload empty file");
+            return "redirect:/welcome?error=emptyFile";
+        }
+
+        // Validation: File type (images only)
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            logger.warn("Attempted to upload non-image file: {}", contentType);
+            return "redirect:/welcome?error=invalidType";
+        }
+
+        // Validation: File size (max 5 MB)
+        if (file.getSize() > 5 * 1024 * 1024) {
+            logger.warn("Attempted to upload file too large: {} bytes", file.getSize());
+            return "redirect:/welcome?error=fileTooLarge";
+        }
+
+        try {
+            // Generate unique filename
+            String originalFilename = file.getOriginalFilename();
+            String extension = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+            String filename = UUID.randomUUID().toString() + extension;
+
+            // Create upload directory if it doesn't exist
+            // Use webapp directory for file storage
+            String webappPath = System.getProperty("catalina.home");
+            if (webappPath == null) {
+                webappPath = System.getProperty("user.dir");
+            }
+            Path uploadPath = Paths.get(webappPath, "webapps", "ROOT", "resources", "Images", "profiles");
+
+            // Create directory if it doesn't exist
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+                logger.info("Created upload directory: {}", uploadPath);
+            }
+
+            // Save file
+            Path filePath = uploadPath.resolve(filename);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            logger.info("File uploaded successfully: {}", filePath);
+
+            // Update user profile image URL
+            String photoUrl = "/resources/Images/profiles/" + filename;
+            user.setProfileImg(photoUrl);
+            user.setProfileImgPath(filePath.toString());
+            userService.save(user);
+
+            logger.info("Profile photo updated successfully for user: {}", username);
+            return "redirect:/welcome?success=photoUploaded";
+
+        } catch (IOException e) {
+            logger.error("Failed to upload photo for user: {}", username, e);
+            return "redirect:/welcome?error=uploadFailed";
+        }
     }
 
 //    @GetMapping("/user/rabbit")
