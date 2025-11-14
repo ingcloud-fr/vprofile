@@ -6,9 +6,11 @@
 
     <!--
     Flyway Configuration for Database Migrations
-    This bean executes database migrations automatically on application startup
+    Uses FlywayFactory to properly configure Flyway 9.x with its fluent API
     -->
-    <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
+
+    <!-- FlywayFactory bean to create and configure Flyway -->
+    <bean id="flywayFactory" class="com.visualpathit.account.config.FlywayFactory">
         <property name="dataSource" ref="dataSource" />
 
         <!-- Location of migration scripts -->
@@ -32,5 +34,8 @@
             </array>
         </property>
     </bean>
+
+    <!-- Flyway bean created via factory method -->
+    <bean id="flyway" factory-bean="flywayFactory" factory-method="createFlyway" />
 
 </beans>
