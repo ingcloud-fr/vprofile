@@ -369,6 +369,12 @@ public class UserController {
                 .outputQuality(0.9)               // High quality (0.0 to 1.0)
                 .toFile(filePath.toFile());
 
+            // Set file permissions to 644 (rw-r--r--) so Tomcat can read it
+            // This is necessary because Thumbnails.toFile() creates files with restrictive permissions
+            Files.setPosixFilePermissions(filePath,
+                java.nio.file.attribute.PosixFilePermissions.fromString("rw-r--r--"));
+            logger.debug("File permissions set to rw-r--r-- (644)");
+
             logger.info("Image saved successfully to: {}", filePath);
 
             // Immediate verification after write
