@@ -7,28 +7,29 @@
 -- ============================================
 
 -- Create user table
+-- IMPORTANT: Column names use camelCase to match JPA property names (no @Column annotations in User.java)
 CREATE TABLE IF NOT EXISTS user (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    user_email VARCHAR(255) NOT NULL UNIQUE,
-    profile_img VARCHAR(500),
-    profile_img_path VARCHAR(500),
-    date_of_birth VARCHAR(255),
-    father_name VARCHAR(255),
-    mother_name VARCHAR(255),
+    userEmail VARCHAR(255) NOT NULL UNIQUE,
+    profileImg VARCHAR(500),
+    profileImgPath VARCHAR(500),
+    dateOfBirth VARCHAR(255),
+    fatherName VARCHAR(255),
+    motherName VARCHAR(255),
     gender VARCHAR(50),
-    marital_status VARCHAR(50),
-    permanent_address VARCHAR(500),
-    temp_address VARCHAR(500),
-    primary_occupation VARCHAR(255),
-    secondary_occupation VARCHAR(255),
+    maritalStatus VARCHAR(50),
+    permanentAddress VARCHAR(500),
+    tempAddress VARCHAR(500),
+    primaryOccupation VARCHAR(255),
+    secondaryOccupation VARCHAR(255),
     skills TEXT,
-    phone_number VARCHAR(50),
-    secondary_phone_number VARCHAR(50),
+    phoneNumber VARCHAR(50),
+    secondaryPhoneNumber VARCHAR(50),
     nationality VARCHAR(100),
     language VARCHAR(100),
-    working_experience TEXT
+    workingExperience TEXT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Create role table
@@ -48,7 +49,7 @@ CREATE TABLE IF NOT EXISTS user_role (
 
 -- Create indexes for performance
 CREATE INDEX idx_user_username ON user(username);
-CREATE INDEX idx_user_email ON user(user_email);
+CREATE INDEX idx_user_email ON user(userEmail);
 CREATE INDEX idx_role_name ON role(name);
 
 -- Insert default roles

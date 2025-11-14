@@ -13,7 +13,7 @@
 -- Insert admin user if not exists
 -- Password: admin123 (BCrypt hash)
 -- Hash generated with BCrypt strength 10
-INSERT IGNORE INTO user (id, username, password, user_email)
+INSERT IGNORE INTO user (id, username, password, userEmail)
 VALUES (
     1,
     'admin',
