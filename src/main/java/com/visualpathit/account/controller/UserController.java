@@ -342,18 +342,10 @@ public class UserController {
             String filename = UUID.randomUUID().toString() + ".jpg";
             logger.debug("Generated filename: {}", filename);
 
-            // Get the real path to the webapp resources directory
-            // This ensures images are saved in the correct location
-            String realPath = servletContext.getRealPath("/resources/Images/profiles");
-            logger.debug("ServletContext real path: {}", realPath);
-
-            if (realPath == null) {
-                logger.error("Failed to get real path for resources directory - servletContext.getRealPath returned null");
-                logger.debug("========== UPLOAD PHOTO DEBUG END (REAL PATH NULL) ==========");
-                return "redirect:/welcome?error=uploadFailed";
-            }
-
-            Path uploadPath = Paths.get(realPath);
+            // Use dedicated external volume for uploads (persistent across container restarts)
+            // This path is mounted as a Docker volume in docker-compose.yml
+            String uploadDirectory = "/var/lib/vprofile/uploads/profiles";
+            Path uploadPath = Paths.get(uploadDirectory);
             logger.debug("Upload directory path: {}", uploadPath);
             logger.debug("Upload directory exists: {}", Files.exists(uploadPath));
 
@@ -373,7 +365,8 @@ public class UserController {
             logger.info("Image saved successfully to: {}", filePath);
 
             // IMPORTANT: Store relative URL starting with /
-            String photoUrl = "/resources/Images/profiles/" + filename;
+            // This URL will be served by Spring's ResourceHandler configuration
+            String photoUrl = "/uploads/profiles/" + filename;
             logger.debug("Photo URL for database: {}", photoUrl);
             logger.debug("Current user profileImg before update: {}", user.getProfileImg());
 
