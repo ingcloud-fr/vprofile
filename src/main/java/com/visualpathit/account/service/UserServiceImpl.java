@@ -37,10 +37,8 @@ public class UserServiceImpl implements UserService {
         }
         user.setRoles(userRoles);
 
-        // Set default profile image if not already set
-        if (user.getProfileImg() == null || user.getProfileImg().isEmpty()) {
-            user.setProfileImg("/resources/Images/default-avatar.png");
-        }
+        // No default profile image - let it be null/empty so JSP can show default-avatar.png
+        // This allows users to have no profile picture initially
 
         userRepository.save(user);
     }

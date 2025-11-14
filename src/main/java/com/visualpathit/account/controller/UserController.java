@@ -324,7 +324,9 @@ public class UserController {
             String photoUrl = "/resources/Images/profiles/" + filename;
             user.setProfileImg(photoUrl);
             user.setProfileImgPath(filePath.toString());
-            userService.save(user);
+
+            // Use update() instead of save() to avoid re-encoding password
+            userService.update(user);
 
             logger.info("Photo URL saved to database: {}", photoUrl);
             logger.info("File path saved to database: {}", filePath);

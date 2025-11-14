@@ -1,5 +1,7 @@
 package com.visualpathit.account.config;
 
+import jakarta.servlet.ServletContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -11,11 +13,25 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    @Autowired
+    private ServletContext servletContext;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Servir les ressources statiques depuis /webapp/resources/
+        // Get the real path to webapp resources
+        String resourcePath = servletContext.getRealPath("/resources/");
+
+        if (resourcePath != null) {
+            // Servir les ressources statiques depuis /webapp/resources/
+            registry
+                .addResourceHandler("/resources/**")
+                .addResourceLocations("file:" + resourcePath + "/")
+                .setCachePeriod(3600);
+        }
+
+        // Fallback to default locations
         registry
             .addResourceHandler("/resources/**")
-            .addResourceLocations("/resources/", "classpath:/static/", "classpath:/public/");
+            .addResourceLocations("/resources/");
     }
 }
