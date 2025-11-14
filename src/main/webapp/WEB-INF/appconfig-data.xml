@@ -17,7 +17,8 @@
     </bean>
 
     <!-- Configure the entity manager factory bean -->
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <!-- depends-on="flyway" ensures database migrations run before JPA initialization -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="flyway">
         <property name="dataSource" ref="dataSource" />
         <property name="packagesToScan" value="com.visualpathit.account.model" />
         <property name="jpaVendorAdapter">

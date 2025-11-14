@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+    Flyway Configuration for Database Migrations
+    This bean executes database migrations automatically on application startup
+    -->
+    <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
+        <property name="dataSource" ref="dataSource" />
+
+        <!-- Location of migration scripts -->
+        <property name="locations">
+            <array>
+                <value>classpath:db/migration</value>
+            </array>
+        </property>
+
+        <!-- Baseline settings for existing databases -->
+        <property name="baselineOnMigrate" value="true" />
+        <property name="baselineVersion" value="0" />
+
+        <!-- Validate migrations on startup -->
+        <property name="validateOnMigrate" value="true" />
+
+        <!-- Schema to manage -->
+        <property name="schemas">
+            <array>
+                <value>accounts</value>
+            </array>
+        </property>
+    </bean>
+
+</beans>

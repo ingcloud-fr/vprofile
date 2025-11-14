@@ -7,6 +7,8 @@
 
 	<import resource="appconfig-mvc.xml" />
 
+	<!-- Flyway must be imported BEFORE data config to run migrations first -->
+	<import resource="appconfig-flyway.xml" />
 	<import resource="appconfig-data.xml" />
 	<import resource="appconfig-rabbitmq.xml" />
 	<import resource="appconfig-security.xml" />
