@@ -54,7 +54,7 @@ public class UserController {
         return "redirect:/welcome";
     }
 
-    @GetMapping("/")
+    @GetMapping("/login")
     public String login(Model model, @RequestParam(value = "error", required = false) String error,
                         @RequestParam(value = "logout", required = false) String logout) {
         if (error != null) {
@@ -64,16 +64,6 @@ public class UserController {
             model.addAttribute("message", "You have been logged out successfully.");
         }
         return "login";
-    }
-
-    @PostMapping("/login")
-    public String loginPost(@ModelAttribute("user") User user, Model model) {
-        boolean loginSuccessful = securityService.autologin(user.getUsername(), user.getPassword());
-        if (!loginSuccessful) {
-            model.addAttribute("error", "Your username and password is invalid.");
-            return "login";
-        }
-        return "redirect:/welcome";
     }
 
     @GetMapping("/welcome")
