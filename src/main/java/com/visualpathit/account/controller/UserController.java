@@ -232,51 +232,91 @@ public class UserController {
 
     @PostMapping("/user/{username}")
     public String userUpdateProfile(@PathVariable("username") String username, @ModelAttribute("user") User userForm) {
+        logger.debug("========== UPDATE USER PROFILE DEBUG START ==========");
+        logger.debug("Updating profile for username: {}", username);
+
         User user = userService.findByUsername(username);
-        updateUserDetails(user, userForm);
-        userService.update(user);
+        logger.debug("User found in database: {}", user != null);
+
+        if (user != null) {
+            logger.debug("Current user email: {}", user.getUserEmail());
+            logger.debug("New user email: {}", userForm.getUserEmail());
+            logger.debug("Current profile image: {}", user.getProfileImg());
+
+            updateUserDetails(user, userForm);
+            logger.debug("User details updated");
+
+            userService.update(user);
+            logger.debug("User saved to database");
+        } else {
+            logger.error("User not found: {}", username);
+        }
+
+        logger.debug("========== UPDATE USER PROFILE DEBUG END ==========");
         return "redirect:/welcome";
     }
 
     @PostMapping("/profile/upload-photo")
     public String uploadPhoto(@RequestParam("photo") MultipartFile file, HttpSession session) {
+        logger.debug("========== UPLOAD PHOTO DEBUG START ==========");
+
         // Get current logged-in user
         String username = securityService.findLoggedInUsername();
+        logger.debug("Logged in username: {}", username);
+
         if (username == null) {
             logger.error("No logged-in user found when uploading photo");
+            logger.debug("========== UPLOAD PHOTO DEBUG END (NO USER) ==========");
             return "redirect:/login";
         }
 
         User user = userService.findByUsername(username);
+        logger.debug("User found in database: {}", user != null);
+
         if (user == null) {
             logger.error("User not found: {}", username);
+            logger.debug("========== UPLOAD PHOTO DEBUG END (USER NOT FOUND) ==========");
             return "redirect:/login";
         }
 
         // Validation: Empty file check
+        logger.debug("File original name: {}", file.getOriginalFilename());
+        logger.debug("File size: {} bytes", file.getSize());
+        logger.debug("File empty: {}", file.isEmpty());
+
         if (file.isEmpty()) {
             logger.warn("Attempted to upload empty file");
+            logger.debug("========== UPLOAD PHOTO DEBUG END (EMPTY FILE) ==========");
             return "redirect:/welcome?error=emptyFile";
         }
 
         // Validation: File type (images only)
         String contentType = file.getContentType();
+        logger.debug("File content type: {}", contentType);
+
         if (contentType == null || !contentType.startsWith("image/")) {
             logger.warn("Attempted to upload non-image file: {}", contentType);
+            logger.debug("========== UPLOAD PHOTO DEBUG END (INVALID TYPE) ==========");
             return "redirect:/welcome?error=invalidType";
         }
 
         // Validation: File size (max 5 MB)
         if (file.getSize() > 5 * 1024 * 1024) {
             logger.warn("Attempted to upload file too large: {} bytes", file.getSize());
+            logger.debug("========== UPLOAD PHOTO DEBUG END (FILE TOO LARGE) ==========");
             return "redirect:/welcome?error=fileTooLarge";
         }
 
+        logger.debug("All validations passed, proceeding with image processing");
+
         try {
             // Read the original image
+            logger.debug("Reading original image from multipart file");
             BufferedImage originalImage = ImageIO.read(file.getInputStream());
+
             if (originalImage == null) {
-                logger.error("Failed to read image file");
+                logger.error("Failed to read image file - ImageIO.read returned null");
+                logger.debug("========== UPLOAD PHOTO DEBUG END (READ FAILED) ==========");
                 return "redirect:/welcome?error=uploadFailed";
             }
 
@@ -284,69 +324,92 @@ public class UserController {
             int width = originalImage.getWidth();
             int height = originalImage.getHeight();
             int size = Math.min(width, height);
+            logger.debug("Original image dimensions: {}x{}, crop size: {}", width, height, size);
 
             int x = (width - size) / 2;
             int y = (height - size) / 2;
+            logger.debug("Crop position: x={}, y={}", x, y);
 
             // Crop to square and resize to 300x300
+            logger.debug("Starting crop and resize operation");
             BufferedImage squareImage = Thumbnails.of(originalImage)
                 .sourceRegion(x, y, size, size)  // Centered square crop
                 .size(300, 300)                   // Resize to 300x300
                 .asBufferedImage();
+            logger.debug("Crop and resize completed successfully");
 
             // Generate unique filename (always save as JPG)
             String filename = UUID.randomUUID().toString() + ".jpg";
+            logger.debug("Generated filename: {}", filename);
 
             // Get the real path to the webapp resources directory
             // This ensures images are saved in the correct location
             String realPath = servletContext.getRealPath("/resources/Images/profiles");
+            logger.debug("ServletContext real path: {}", realPath);
 
             if (realPath == null) {
-                logger.error("Failed to get real path for resources directory");
+                logger.error("Failed to get real path for resources directory - servletContext.getRealPath returned null");
+                logger.debug("========== UPLOAD PHOTO DEBUG END (REAL PATH NULL) ==========");
                 return "redirect:/welcome?error=uploadFailed";
             }
 
             Path uploadPath = Paths.get(realPath);
-            logger.info("Upload directory path: {}", uploadPath);
+            logger.debug("Upload directory path: {}", uploadPath);
+            logger.debug("Upload directory exists: {}", Files.exists(uploadPath));
 
             // Create directory if it doesn't exist
             if (!Files.exists(uploadPath)) {
+                logger.debug("Creating upload directory");
                 Files.createDirectories(uploadPath);
                 logger.info("Created upload directory: {}", uploadPath);
             }
 
             // Save the cropped and resized image
             Path filePath = uploadPath.resolve(filename);
+            logger.debug("Full file path: {}", filePath);
+            logger.debug("Saving image to disk");
+
             ImageIO.write(squareImage, "jpg", filePath.toFile());
             logger.info("Image saved successfully to: {}", filePath);
 
             // IMPORTANT: Store relative URL starting with /
             String photoUrl = "/resources/Images/profiles/" + filename;
+            logger.debug("Photo URL for database: {}", photoUrl);
+            logger.debug("Current user profileImg before update: {}", user.getProfileImg());
+
             user.setProfileImg(photoUrl);
             user.setProfileImgPath(filePath.toString());
+            logger.debug("User object updated with new photo info");
 
             // Use update() instead of save() to avoid re-encoding password
+            logger.debug("Calling userService.update() to save to database");
             userService.update(user);
-
             logger.info("Photo URL saved to database: {}", photoUrl);
             logger.info("File path saved to database: {}", filePath);
 
             // Verify file was actually saved
-            if (Files.exists(filePath)) {
-                logger.info("File verified to exist at: {}", filePath);
+            boolean fileExists = Files.exists(filePath);
+            logger.debug("File exists after save: {}", fileExists);
+
+            if (fileExists) {
+                long fileSize = Files.size(filePath);
+                logger.info("File verified to exist at: {}, size: {} bytes", filePath, fileSize);
             } else {
                 logger.error("File was NOT saved correctly at: {}", filePath);
             }
 
             // IMPORTANT: Update session to refresh navbar photo
             session.setAttribute("currentUser", user);
-            logger.info("Session updated with new profile photo");
+            logger.debug("Session updated with new profile photo");
 
             logger.info("Profile photo updated successfully for user: {}", username);
+            logger.debug("========== UPLOAD PHOTO DEBUG END (SUCCESS) ==========");
             return "redirect:/welcome?success=photoUploaded";
 
         } catch (IOException e) {
             logger.error("Failed to upload photo for user: {}", username, e);
+            logger.debug("Exception details: {}", e.getMessage());
+            logger.debug("========== UPLOAD PHOTO DEBUG END (EXCEPTION) ==========");
             return "redirect:/welcome?error=uploadFailed";
         }
     }
