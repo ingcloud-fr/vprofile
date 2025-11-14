@@ -102,9 +102,12 @@
                         </div>
                         <div class="navbar-collapse collapse">
                             <ul class="nav navbar-nav">
-                                <li><a href="${contextPath}/timeline">Timeline</a></li>
-                                <li class="active"><a href="${contextPath}/my-posts">Mes Messages</a></li>
                                 <li><a href="${contextPath}/welcome">Mon Profil</a></li>
+                                <li class="active"><a href="${contextPath}/my-posts">Mes Messages</a></li>
+                               <li>
+                                    <a href="#"><i class="fa fa-bell-o fa-lg" aria-hidden="true"></i></a>
+                                </li>
+                                <li><a href="#"><i class="fa fa-envelope-o fa-lg" aria-hidden="true"></i></a></li>
                             </ul>
                             <ul class="nav navbar-nav navbar-right">
                                 <li class="dropdown">
@@ -181,7 +184,7 @@
             <div class="stats-box">
                 <strong>Total de vos publications:</strong> ${totalPosts}
                 <span class="pull-right">
-                    <a href="${contextPath}/timeline" class="btn btn-primary btn-sm">
+                    <a href="${contextPath}/welcome" class="btn btn-primary btn-sm">
                         <i class="fa fa-globe" aria-hidden="true"></i> Retour au fil public
                     </a>
                 </span>
@@ -254,7 +257,7 @@
                         <i class="fa fa-edit fa-5x" aria-hidden="true"></i>
                         <p>Vous n'avez pas encore publié de messages.</p>
                         <p>
-                            <a href="${contextPath}/timeline" class="btn btn-success">
+                            <a href="${contextPath}/welcome" class="btn btn-success">
                                 <i class="fa fa-plus" aria-hidden="true"></i> Créer votre premier post
                             </a>
                         </p>

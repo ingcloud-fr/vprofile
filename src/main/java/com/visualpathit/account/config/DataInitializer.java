@@ -9,6 +9,7 @@ import com.visualpathit.account.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,6 +42,15 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Value("${ADMIN_USERNAME:admin}")
+    private String adminUsername;
+
+    @Value("${ADMIN_PASSWORD:admin123}")
+    private String adminPassword;
+
+    @Value("${ADMIN_EMAIL:admin@vprofile.com}")
+    private String adminEmail;
+
     private boolean alreadySetup = false;
 
     @Override
@@ -52,9 +62,10 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         logger.info("Starting data initialization...");
 
         // Check if admin already exists
-        User existingAdmin = userRepository.findByUsername("admin");
+        User existingAdmin = userRepository.findByUsername(adminUsername);
         if (existingAdmin != null) {
             logger.info("Admin user already exists, skipping initialization");
+            alreadySetup = true;
             return;
         }
 
@@ -77,11 +88,11 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         }
 
         // Create admin user
-        logger.info("Creating admin user");
+        logger.info("Creating admin user: {}", adminUsername);
         User admin = new User();
-        admin.setUsername("admin");
-        admin.setPassword(bCryptPasswordEncoder.encode("admin123"));
-        admin.setUserEmail("admin@vprofile.com");
+        admin.setUsername(adminUsername);
+        admin.setPassword(bCryptPasswordEncoder.encode(adminPassword));
+        admin.setUserEmail(adminEmail);
 
         // Assign both ROLE_USER and ROLE_ADMIN
         Set<Role> adminRoles = new HashSet<>();
@@ -100,29 +111,22 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     }
 
     private void createAdminPosts(User admin) {
-        logger.info("Creating welcome posts from admin");
+        logger.info("Creating welcome post from admin");
 
-        String[] postContents = {
-            "Bienvenue sur vProfile ! 🎉 Notre réseau social est maintenant opérationnel.",
-            "N'hésitez pas à partager vos idées et à vous connecter avec d'autres utilisateurs !",
-            "Les nouvelles fonctionnalités arrivent bientôt : likes, commentaires, et bien plus !",
-            "Rappel : soyez respectueux dans vos publications et suivez les règles de la communauté.",
-            "Astuce : vous pouvez ajouter des images à vos posts en utilisant une URL !"
-        };
+        String welcomeMessage = "Bienvenue sur vProfile ! 🎉\n\n" +
+                "vProfile est votre nouveau réseau social professionnel. Ici, vous pouvez partager vos expériences DevOps, " +
+                "échanger avec d'autres professionnels de l'IT, et découvrir les dernières tendances en automatisation et CI/CD.\n\n" +
+                "N'hésitez pas à créer votre premier post, compléter votre profil, et commencer à construire votre réseau !\n\n" +
+                "Astuce : Vous pouvez ajouter des images à vos posts en utilisant une URL d'image.\n\n" +
+                "Bonne navigation ! 🚀";
 
-        // Create posts with slight time differences (older posts first)
-        LocalDateTime now = LocalDateTime.now();
-        for (int i = 0; i < postContents.length; i++) {
-            Post post = new Post();
-            post.setContent(postContents[i]);
-            post.setAuthor(admin);
-            // Make older posts appear further in the past (5 hours ago, 4 hours ago, etc.)
-            post.setCreatedAt(now.minusHours(postContents.length - i));
-            post.setLikesCount(0);
-            postRepository.save(post);
-            logger.info("Created admin post {}/{}", i + 1, postContents.length);
-        }
+        Post welcomePost = new Post();
+        welcomePost.setContent(welcomeMessage);
+        welcomePost.setAuthor(admin);
+        welcomePost.setCreatedAt(LocalDateTime.now().minusHours(1));
+        welcomePost.setLikesCount(0);
+        postRepository.save(welcomePost);
 
-        logger.info("All {} admin posts created successfully", postContents.length);
+        logger.info("Welcome post created successfully");
     }
 }

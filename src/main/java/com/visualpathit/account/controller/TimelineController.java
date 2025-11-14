@@ -38,73 +38,44 @@ public class TimelineController {
     private SecurityService securityService;
 
     /**
-     * Display the public timeline with all posts
+     * Redirect /timeline to /welcome (public timeline is now on welcome page)
      */
     @GetMapping("/timeline")
-    public String timeline(Model model,
-                          @RequestParam(value = "page", defaultValue = "0") int page) {
-        logger.info("Accessing timeline, page: {}", page);
-
-        // Get current user
-        String username = securityService.findLoggedInUsername();
-        if (username != null) {
-            User currentUser = userService.findByUsername(username);
-            model.addAttribute("currentUser", currentUser);
-        }
-
-        // Get all posts with pagination
-        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
-        Page<Post> postsPage = postService.findAllPosts(pageable);
-
-        model.addAttribute("posts", postsPage.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", postsPage.getTotalPages());
-        model.addAttribute("totalPosts", postsPage.getTotalElements());
-        model.addAttribute("hasNext", postsPage.hasNext());
-        model.addAttribute("hasPrevious", postsPage.hasPrevious());
-
-        logger.info("Timeline loaded with {} posts", postsPage.getContent().size());
-
-        return "timeline";
+    public String timeline(@RequestParam(value = "page", defaultValue = "0") int page) {
+        logger.info("Redirecting /timeline to /welcome");
+        return page > 0 ? "redirect:/welcome?page=" + page : "redirect:/welcome";
     }
 
     /**
-     * Create a new post
+     * Create a new post - redirect to welcome/post
      */
     @PostMapping("/timeline/post")
     public String createPost(@RequestParam("content") String content,
                             @RequestParam(value = "imageUrl", required = false) String imageUrl) {
-        logger.info("Creating new post");
+        logger.info("Redirecting POST /timeline/post to /welcome/post");
 
         // Get current user
         String username = securityService.findLoggedInUsername();
         if (username == null) {
-            logger.error("No logged-in user found when creating post");
             return "redirect:/login";
         }
 
         User currentUser = userService.findByUsername(username);
         if (currentUser == null) {
-            logger.error("User not found: {}", username);
             return "redirect:/login";
         }
 
-        // Validate content
+        // Validate and create post
         if (content == null || content.trim().isEmpty()) {
-            logger.warn("Attempted to create post with empty content");
-            return "redirect:/timeline?error=empty";
+            return "redirect:/welcome?error=empty";
         }
 
         if (content.length() > 500) {
-            logger.warn("Attempted to create post with content exceeding 500 characters");
-            return "redirect:/timeline?error=toolong";
+            return "redirect:/welcome?error=toolong";
         }
 
-        // Create post
         postService.createPost(content, imageUrl, currentUser);
-
-        logger.info("Post created successfully by user: {}", username);
-        return "redirect:/timeline";
+        return "redirect:/welcome";
     }
 
     /**
