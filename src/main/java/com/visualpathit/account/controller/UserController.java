@@ -337,18 +337,10 @@ public class UserController {
             String filename = UUID.randomUUID().toString() + ".jpg";
             logger.debug("Generated filename: {}", filename);
 
-            // Get the real path to the webapp resources directory
-            // This ensures images are saved in the correct location
-            String realPath = servletContext.getRealPath("/resources/Images/profiles");
-            logger.debug("ServletContext real path: {}", realPath);
-
-            if (realPath == null) {
-                logger.error("Failed to get real path for resources directory - servletContext.getRealPath returned null");
-                logger.debug("========== UPLOAD PHOTO DEBUG END (REAL PATH NULL) ==========");
-                return "redirect:/welcome?error=uploadFailed";
-            }
-
-            Path uploadPath = Paths.get(realPath);
+            // Use dedicated external volume for uploads (persistent across container restarts)
+            // This path is mounted as a Docker volume in docker-compose.yml
+            String uploadDirectory = "/var/lib/vprofile/uploads/profiles";
+            Path uploadPath = Paths.get(uploadDirectory);
             logger.debug("Upload directory path: {}", uploadPath);
             logger.debug("Upload directory exists: {}", Files.exists(uploadPath));
 
@@ -358,6 +350,11 @@ public class UserController {
                 Files.createDirectories(uploadPath);
                 logger.info("Created upload directory: {}", uploadPath);
             }
+
+            // Check directory permissions
+            logger.debug("Directory readable: {}", Files.isReadable(uploadPath));
+            logger.debug("Directory writable: {}", Files.isWritable(uploadPath));
+            logger.debug("Directory executable: {}", Files.isExecutable(uploadPath));
 
             // Save the cropped and resized image directly to file
             Path filePath = uploadPath.resolve(filename);
@@ -374,8 +371,38 @@ public class UserController {
 
             logger.info("Image saved successfully to: {}", filePath);
 
+            // Immediate verification after write
+            boolean fileExistsImmediately = Files.exists(filePath);
+            logger.debug("File exists IMMEDIATELY after write: {}", fileExistsImmediately);
+
+            if (fileExistsImmediately) {
+                long fileSize = Files.size(filePath);
+                logger.info("File IMMEDIATELY verified to exist, size: {} bytes", fileSize);
+
+                // Check file permissions
+                logger.debug("File readable: {}", Files.isReadable(filePath));
+                logger.debug("File writable: {}", Files.isWritable(filePath));
+
+                // List directory contents to confirm
+                logger.debug("Directory contents:");
+                try (var stream = Files.list(uploadPath)) {
+                    stream.forEach(path -> logger.debug("  - {}", path.getFileName()));
+                }
+            } else {
+                logger.error("File was NOT saved correctly at: {}", filePath);
+
+                // Debug: List directory contents
+                logger.debug("Directory contents after failed write:");
+                try (var stream = Files.list(uploadPath)) {
+                    stream.forEach(path -> logger.debug("  - {}", path.getFileName()));
+                } catch (IOException listEx) {
+                    logger.error("Cannot list directory: {}", listEx.getMessage());
+                }
+            }
+
             // IMPORTANT: Store relative URL starting with /
-            String photoUrl = "/resources/Images/profiles/" + filename;
+            // This URL will be served by Spring's ResourceHandler configuration
+            String photoUrl = "/uploads/profiles/" + filename;
             logger.debug("Photo URL for database: {}", photoUrl);
             logger.debug("Current user profileImg before update: {}", user.getProfileImg());
 
@@ -389,11 +416,11 @@ public class UserController {
             logger.info("Photo URL saved to database: {}", photoUrl);
             logger.info("File path saved to database: {}", filePath);
 
-            // Verify file was actually saved
-            boolean fileExists = Files.exists(filePath);
-            logger.debug("File exists after save: {}", fileExists);
+            // Verify file again after database update
+            boolean fileExistsAfterDB = Files.exists(filePath);
+            logger.debug("File exists AFTER database update: {}", fileExistsAfterDB);
 
-            if (fileExists) {
+            if (fileExistsAfterDB) {
                 long fileSize = Files.size(filePath);
                 logger.info("File verified to exist at: {}, size: {} bytes", filePath, fileSize);
             } else {
