@@ -16,11 +16,20 @@ RUN mvn clean package -DskipTests
 # Stage 2: Runtime avec Tomcat
 FROM tomcat:10.1-jdk17-temurin-jammy
 
+# Installer unzip pour décompresser le WAR
+RUN apt-get update && apt-get install -y unzip && rm -rf /var/lib/apt/lists/*
+
 # Supprimer les apps par défaut de Tomcat
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Copier le WAR depuis le stage de build
 COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
+
+# Décompresser le WAR manuellement pour permettre au volume Docker de se monter correctement
+RUN cd /usr/local/tomcat/webapps && \
+    unzip -q ROOT.war -d ROOT && \
+    rm ROOT.war && \
+    mkdir -p ROOT/resources/Images/profiles
 
 # Exposer le port
 EXPOSE 8080
