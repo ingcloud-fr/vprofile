@@ -40,10 +40,10 @@
                         <!-- Navbar Links -->
                         <div class="navbar-collapse collapse">
                             <ul class="nav navbar-nav">
-
-                                <li><a href="#">My Activity</a></li>
+                                <li><a href="${contextPath}/timeline">Timeline</a></li>
+                                <li><a href="${contextPath}/my-posts">Mes Messages</a></li>
+                                <li><a href="${contextPath}/welcome">Mon Profil</a></li>
                                <li>
-
                                     <a href="#"><i class="fa fa-bell-o fa-lg" aria-hidden="true"></i></a>
                                 </li>
                                 <li><a href="#"><i class="fa fa-envelope-o fa-lg" aria-hidden="true"></i></a></li>

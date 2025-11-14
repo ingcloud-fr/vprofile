@@ -38,9 +38,9 @@ public class UserController {
 
     @GetMapping("/")
     public String home() {
-        // Redirect authenticated users to welcome page
+        // Redirect authenticated users to timeline page
         // Non-authenticated users will be redirected to login by Spring Security
-        return "redirect:/welcome";
+        return "redirect:/timeline";
     }
 
     @GetMapping("/registration")
@@ -71,8 +71,8 @@ public class UserController {
             return "redirect:/login?registered";
         }
 
-        logger.info("Registration and auto-login successful for user: {}, redirecting to welcome page", userForm.getUsername());
-        return "redirect:/welcome";
+        logger.info("Registration and auto-login successful for user: {}, redirecting to timeline page", userForm.getUsername());
+        return "redirect:/timeline";
     }
 
     @GetMapping("/login")
