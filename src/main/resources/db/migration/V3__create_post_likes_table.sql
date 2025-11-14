@@ -7,10 +7,11 @@
 -- ============================================
 
 -- Create post_likes table
+-- IMPORTANT: All ID columns use BIGINT UNSIGNED for foreign key compatibility
 CREATE TABLE IF NOT EXISTS post_likes (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    post_id BIGINT NOT NULL,
-    user_id BIGINT NOT NULL,
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    post_id BIGINT UNSIGNED NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
