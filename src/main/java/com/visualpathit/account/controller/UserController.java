@@ -332,11 +332,6 @@ public class UserController {
 
             // Crop to square and resize to 300x300
             logger.debug("Starting crop and resize operation");
-            BufferedImage squareImage = Thumbnails.of(originalImage)
-                .sourceRegion(x, y, size, size)  // Centered square crop
-                .size(300, 300)                   // Resize to 300x300
-                .asBufferedImage();
-            logger.debug("Crop and resize completed successfully");
 
             // Generate unique filename (always save as JPG)
             String filename = UUID.randomUUID().toString() + ".jpg";
@@ -361,16 +356,19 @@ public class UserController {
             logger.debug("Directory writable: {}", Files.isWritable(uploadPath));
             logger.debug("Directory executable: {}", Files.isExecutable(uploadPath));
 
-            // Save the cropped and resized image
+            // Save the cropped and resized image directly to file
             Path filePath = uploadPath.resolve(filename);
             logger.debug("Full file path: {}", filePath);
-            logger.debug("Saving image to disk");
+            logger.debug("Saving image to disk using Thumbnails.toFile()");
 
-            // Use try-with-resources to ensure file is properly flushed and closed
-            try (var outputStream = Files.newOutputStream(filePath)) {
-                ImageIO.write(squareImage, "jpg", outputStream);
-                outputStream.flush(); // Ensure data is written to disk
-            }
+            // Use Thumbnails to write directly to file (more reliable than ImageIO.write)
+            Thumbnails.of(originalImage)
+                .sourceRegion(x, y, size, size)  // Centered square crop
+                .size(300, 300)                   // Resize to 300x300
+                .outputFormat("jpg")              // Force JPG format
+                .outputQuality(0.9)               // High quality (0.0 to 1.0)
+                .toFile(filePath.toFile());
+
             logger.info("Image saved successfully to: {}", filePath);
 
             // Immediate verification after write
