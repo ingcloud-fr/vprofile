@@ -3,17 +3,91 @@
 <%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
 <%@ page import="org.springframework.security.core.Authentication" %>
 
-
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Welcome</title>
+    <title>Mon Profil - vProfile</title>
     <link rel="stylesheet" href="${contextPath}/resources/css/bootstrap.min.css">
     <link href="${contextPath}/resources/css/profile.css" rel="stylesheet">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .post-create-box {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .post-create-box textarea {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        .post-create-box input[type="text"] {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        .post-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .post-header .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .post-info strong {
+            display: block;
+            color: #333;
+        }
+        .post-info small {
+            color: #999;
+        }
+        .post-content {
+            margin-bottom: 15px;
+            word-wrap: break-word;
+        }
+        .post-content p {
+            margin-bottom: 10px;
+        }
+        .post-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .post-actions {
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .likes-count {
+            color: #666;
+            font-size: 14px;
+        }
+        .no-posts {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
 
@@ -24,40 +98,33 @@
                 <nav class="navbar navbar-custom navbar-static-top" role="navigation">
                     <div class="container-fluid">
                         <div class="navbar-header">
-                            <!-- Toggle Button for Mobile View -->
                             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                                 <span class="sr-only">Toggle navigation</span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <!-- Navbar Brand -->
                             <a class="navbar-brand" href="#" style="margin-right: -8px; margin-top: -5px;">
                                 <img alt="Brand" src="${contextPath}/resources/Images/user/logo.png" width="30px" height="30px">
                             </a>
                             <a class="navbar-brand" href="#">HKH Infotech</a>
                         </div>
-                        <!-- Navbar Links -->
                         <div class="navbar-collapse collapse">
                             <ul class="nav navbar-nav">
-
-                                <li><a href="#">My Activity</a></li>
+                                <li class="active"><a href="${contextPath}/welcome">Mon Profil</a></li>
+                                <li><a href="${contextPath}/my-posts">Mes Messages</a></li>
                                <li>
-
                                     <a href="#"><i class="fa fa-bell-o fa-lg" aria-hidden="true"></i></a>
                                 </li>
                                 <li><a href="#"><i class="fa fa-envelope-o fa-lg" aria-hidden="true"></i></a></li>
                             </ul>
-                            <!-- User Dropdown -->
                             <ul class="nav navbar-nav navbar-right">
                                 <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         <span class="user-avatar pull-left" style="margin-right: 8px; margin-top: -5px;">
-                                            <img src="${contextPath}/resources/Images/user/user.png" class="img-responsive img-circle" title="John Doe" alt="John Doe" width="30px" height="30px">
+                                            <img src="${contextPath}/resources/Images/user/user.png" class="img-responsive img-circle" title="${pageContext.request.userPrincipal.name}" alt="${pageContext.request.userPrincipal.name}" width="30px" height="30px">
                                         </span>
-                                        <span class="user-name">
-                                            ${pageContext.request.userPrincipal.name}
-                                        </span>
+                                        <span class="user-name">${pageContext.request.userPrincipal.name}</span>
                                         <b class="caret"></b>
                                     </a>
                                     <ul class="dropdown-menu">
@@ -85,21 +152,14 @@
                                             </div>
                                            <div class="navbar-footer">
                                                <div class="navbar-footer-content">
-                                                   <div class="row">
-
-
-                                                   </div>
+                                                   <div class="row"></div>
                                                </div>
                                            </div>
-                                           <!-- Logout form -->
-                                          <!-- Logout Form (CSRF is disabled in security config) -->
                                           <form id="logoutForm" method="POST" action="${contextPath}/logout">
                                               <button type="submit" class="btn btn-default btn-sm pull-right">
                                                   <i class="fa fa-power-off" aria-hidden="true"></i> Sign Out
                                               </button>
                                           </form>
-
-
                                         </li>
                                     </ul>
                                 </li>
@@ -112,426 +172,162 @@
     </div>
 </div>
 
+<div style="padding-top:50px;">.</div>
 
-        <div style="padding-top:50px;">.</div>
-        <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="media">
-                        <div align="center">
-                            <img class="thumbnail img-responsive" src="${contextPath}/resources/Images/user/user.png" width="300px" height="300px">
-                        </div>
-                        <div class="media-body">
-                            <hr>
-                            <h3><strong>Email</strong></h3>
-                            <p>
-                                <c:choose>
-                                    <c:when test="${not empty currentUser.userEmail}">
-                                        <i class="fa fa-envelope"></i> ${currentUser.userEmail}
-                                    </c:when>
-                                    <c:otherwise>
-                                        <em>Not specified</em>
-                                    </c:otherwise>
-                                </c:choose>
-                            </p>
-                            <hr>
-                            <h3><strong>Location</strong></h3>
-                            <p>
-                                <c:choose>
-                                    <c:when test="${not empty currentUser.permanentAddress}">
-                                        <i class="fa fa-map-marker"></i> ${currentUser.permanentAddress}
-                                    </c:when>
-                                    <c:otherwise>
-                                        <em>Not specified</em>
-                                    </c:otherwise>
-                                </c:choose>
-                            </p>
-                            <hr>
-                            <h3><strong>Bio</strong></h3>
-                            <p style="white-space: pre-wrap;">
-                                <c:choose>
-                                    <c:when test="${not empty currentUser.skills}">
-                                        ${currentUser.skills}
-                                    </c:when>
-                                    <c:otherwise>
-                                        <em>No bio information yet. Update your profile to add one!</em>
-                                    </c:otherwise>
-                                </c:choose>
-                            </p>
-                        </div>
+<!-- Layout 2 colonnes : Profil à gauche, Timeline à droite -->
+<div class="row">
+    <!-- COLONNE GAUCHE : Profil utilisateur -->
+    <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="media">
+                    <div align="center">
+                        <img class="thumbnail img-responsive" src="${contextPath}/resources/Images/user/user.png" width="300px" height="300px">
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <span>
-                        <h1 class="panel-title pull-left" style="font-size:30px;">${pageContext.request.userPrincipal.name} &nbsp; <small>${pageContext.request.userPrincipal.name}@hkhinfotech.co.in</small> <i class="fa fa-check text-success" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title=" sharing with you"></i></h1>
-                        <div class="dropdown pull-right">
-
-                            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                Friends
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                                <li><a href="#">Familly</a></li>
-                                <li><a href="#"><i class="fa fa-fw fa-check" aria-hidden="true"></i> Friends</a></li>
-                                <li><a href="#">Work</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#"><i class="fa fa-fw fa-plus" aria-hidden="true"></i> Add a new aspect</a></li>
-                            </ul>
-                        </div>
-                    </span>
-
-                      <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
-                      <%
-                          Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-                          String username = auth != null ? auth.getName() : "to Hkhinfotech Social Media";
-                      %>
-                      <p>Welcome, <%= username %>!</p>
-
-                      <br><br>
-                      <i class="fa fa-tags" aria-hidden="true"></i>
-                      <a href="#" class="tag">#DevOps</a>
-                      <a href="#" class="tag">#Continuous Integration</a>
-                      <a href="#" class="tag">#Continuous Delivery</a>
-                      <a href="#" class="tag">#Automation</a>
-
-                      <c>
-                          <a href="${contextPath}/users" class="btn btn-success">All Users</a>
-                          <a href="${contextPath}/user/rabbit" class="btn btn-success">RabbitMq</a>
-                          <a href="#" class="btn btn-success">Elasticsearch</a>
-                      </c>
-
-                      <br><br><hr>
-
-
-
-                    <span class="pull-left">
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-fw fa-files-o" aria-hidden="true"></i> Posts</a>
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-fw fa-picture-o" aria-hidden="true"></i> Photos <span class="badge">42</span></a>
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-fw fa-users" aria-hidden="true"></i> Contacts <span class="badge">42</span></a>
-                    </span>
-                    <span class="pull-right">
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-lg fa-at" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Mention"></i></a>
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-lg fa-envelope-o" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Message"></i></a>
-                        <a href="#" class="btn btn-link" style="text-decoration:none;"><i class="fa fa-lg fa-ban" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Ignore"></i></a>
-                    </span>
-                </div>
-            </div>
-            <hr>
-            <!-- Simple post content example. -->
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="pull-left">
-                        <a href="#">
-                            <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user.png" width="50px" height="50px" style="margin-right:8px; margin-top:-5px;">
-                        </a>
-                    </div>
-                    <h4><a href="#" style="text-decoration:none;"><strong>${pageContext.request.userPrincipal.name}</strong></a><small><small><a href="#" style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> 42 minutes ago</i></a></small></small></h4>
-                    <span>
-                        <div class="navbar-right">
-                            <div class="dropdown">
-                                <button class="btn btn-link btn-xs dropdown-toggle" type="button" id="dd1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <i class="fa fa-cog" aria-hidden="true"></i>
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dd1" style="float: right;">
-                                    <li><a href="#"><i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> Report</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-ban" aria-hidden="true"></i> Ignore</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-bell" aria-hidden="true"></i> Enable notifications for this post</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-eye-slash" aria-hidden="true"></i> Hide</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-trash" aria-hidden="true"></i> Delete</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </span>
-                    <hr>
-                    <div class="post-content">
-                        <p>"The Key to DevOps Success."</p>
-                        <p>The Key to DevOps Success" Collaboration". Collaboration is essential to DevOps,yet how to do it is often unclear with many teams falling back on ineffective conference calls, instant messaging, documents, and SharePoint sites. In this keynote,we will share a vision for a next generation DevOps where collaboration, continuous documentation, and knowledge capture are combined with automation toolchains to enable rapid innovation and deployment.</p>
-                    </div>
-                    <hr>
-                    <div>
-                        <div class="pull-right btn-group-xs">
-                            <a class="btn btn-default btn-xs"><i class="fa fa-heart" aria-hidden="true"></i> Like</a>
-                            <a class="btn btn-default btn-xs"><i class="fa fa-retweet" aria-hidden="true"></i> Reshare</a>
-                            <a class="btn btn-default btn-xs"><i class="fa fa-comment" aria-hidden="true"></i> Comment</a>
-                        </div>
-                        <div class="pull-left">
-                            <p class="text-muted" style="margin-left:5px;"><i class="fa fa-globe" aria-hidden="true"></i> Public</p>
-                        </div>
-                        <br>
-                    </div>
-                    <hr>
-                    <div class="media">
-                        <div class="pull-left">
-                            <a href="#">
-                                <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user.png" width="35px" height="35px" style="margin-left:3px; margin-right:-5px;">
-                            </a>
-                        </div>
-                        <div class="media-body">
-                            <textarea class="form-control" rows="1" placeholder="Comment"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Reshare Example -->
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="pull-left">
-                        <a href="#">
-                            <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user.png" width="50px" height="50px" style="margin-right:8px; margin-top:-5px;">
-                        </a>
-                    </div>
-                    <h4><a href="#" style="text-decoration:none;"><strong>${pageContext.request.userPrincipal.name}</strong></a><small><small><a href="#" style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> 42 minutes ago</i></a></small></small></h4>
-                    <span>
-                        <div class="navbar-right">
-                            <div class="dropdown">
-                                <button class="btn btn-link btn-xs dropdown-toggle" type="button" id="dd1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <i class="fa fa-cog" aria-hidden="true"></i>
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dd1" style="float: right;">
-                                    <li><a href="#"><i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> Report</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-ban" aria-hidden="true"></i> Ignore</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-bell" aria-hidden="true"></i> Enable notifications for this post</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-eye-slash" aria-hidden="true"></i> Hide</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-trash" aria-hidden="true"></i> Delete</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </span>
-                    <hr>
-                    <div class="post-content">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <div class="pull-left">
-                                    <a href="#">
-                                        <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user2.png" width="50px" height="50px" style="margin-right:8px; margin-top:-5px;">
-                                    </a>
-                                </div>
-                                <h4><a href="#" style="text-decoration:none;"><strong>Abrar nirban</strong></a> <small><small><a href="#" style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> about 10 hours ago</i></a></small></small></h4>
-                                <hr>
-                                <div class="post-content">
-                                     <p>What are DevOps skills?</p>
-                                    <p>Our respondents identified the top three skill areas for DevOps staff:</p>
-                                    <p>1) Coding or scripting 2)Process re-engineering 3)Communicating and collaborating with others Extensive knowledge of software build cycles 4)Experience deploying code 5)Experience in software architecture 6)Familiarity with application programming 7)Database management 8)System design.</p>
-									<p>These skills all point to a growing recognition that software is not written in the old way anymore. Where software used to be written from scratch in a highly complex and lengthy process, creating new products is now often a matter of choosing open source components and stitching them together with code. The complexity of todays software lies less in the authoring, and more in ensuring that the new software will work across a diverse set of operating systems and platforms right away. Likewise, testing and deployment are now done much more frequently. That is, they can be more frequent,if developers communicate early and regularly with the operations team, and if ops people bring their knowledge of the production environment to design of testing and staging environments.</p>
-                                    <p>Demand for people with DevOps skills is growing rapidly because businesses get great results from DevOps. Organizations using DevOps practices are overwhelmingly high-functioning: They deploy code up to 30 times more frequently than their competitors.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div>
-                        <div class="pull-right btn-group-xs">
-                            <a class="btn btn-default btn-xs"><i class="fa fa-heart" aria-hidden="true"></i> Like</a>
-                            <a class="btn btn-default btn-xs"><i class="fa fa-retweet" aria-hidden="true"></i> Reshare</a>
-                            <a class="btn btn-default btn-xs"><i class="fa fa-comment" aria-hidden="true"></i> Comment</a>
-                        </div>
-                        <div class="pull-left">
-                            <p class="text-muted" style="margin-left:5px;"><i class="fa fa-globe" aria-hidden="true"></i> Public</p>
-                        </div>
-                        <br>
-                    </div>
-                    <hr>
-                    <div class="media">
-                        <div class="pull-left">
-                            <a href="#">
-                                <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user.png" width="35px" height="35px" style="margin-left:3px; margin-right:-5px;">
-                            </a>
-                        </div>
-                        <div class="media-body">
-                            <textarea class="form-control" rows="1" placeholder="Comment"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Sample post content with picture. -->
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="pull-left">
-                        <a href="#">
-                            <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user.png" width="50px" height="50px" style="margin-right:8px; margin-top:-5px;">
-                        </a>
-                    </div>
-                    <h4><a href="#" style="text-decoration:none;"><strong>${pageContext.request.userPrincipal.name}</strong></a><small><small><a href="#" style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> 42 minutes ago</i></a></small></small></h4>
-                    <span>
-                        <div class="navbar-right">
-                            <div class="dropdown">
-                                <button class="btn btn-link btn-xs dropdown-toggle" type="button" id="dd1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <i class="fa fa-cog" aria-hidden="true"></i>
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dd1" style="float: right;">
-                                    <li><a href="#"><i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> Report</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-ban" aria-hidden="true"></i> Ignore</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-bell" aria-hidden="true"></i> Enable notifications for this post</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-eye-slash" aria-hidden="true"></i> Hide</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-trash" aria-hidden="true"></i> Delete</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </span>
-                    <hr>
-                    <div class="post-content">
-                        <p>" Manager Reaction On Your Work without DevOps "</p>
-                        <img class="img-responsive" src="${contextPath}/resources/Images/user/giphy.gif">
-                        <p><br><a href="#" class="tag">#  I want DevOps </a> <a href="#" class="tag">#  DevOps..</a></p>
-                    </div>
-                    <hr>
-                    <div>
-                        <div class="pull-right btn-group-xs">
-                            <a class="btn btn-default btn-xs"><i class="fa fa-heart" aria-hidden="true"></i> Like</a>
-                            <a class="btn btn-default btn-xs"><i class="fa fa-retweet" aria-hidden="true"></i> Reshare</a>
-                            <a class="btn btn-default btn-xs"><i class="fa fa-comment" aria-hidden="true"></i> Comment</a>
-                        </div>
-                        <div class="pull-left">
-                            <p class="text-muted" style="margin-left:5px;"><i class="fa fa-globe" aria-hidden="true"></i> Public <strong>via mobile</strong></p>
-                        </div>
-                        <br>
-                    </div>
-                    <hr>
-                    <div class="media">
-                        <div class="pull-left">
-                            <a href="#">
-                                <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user.png" width="35px" height="35px" style="margin-left:3px; margin-right:-5px;">
-                            </a>
-                        </div>
-                        <div class="media-body">
-                            <textarea class="form-control" rows="1" placeholder="Comment"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Sample post content with comments. -->
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="pull-left">
-                        <a href="#">
-                            <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user.png" width="50px" height="50px" style="margin-right:8px; margin-top:-5px;">
-                        </a>
-                    </div>
-                    <h4><a href="#" style="text-decoration:none;"><strong>${pageContext.request.userPrincipal.name}</strong></a> <small><small><a href="#" style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> 42 minutes ago</i></a></small></small></h4>
-                    <span>
-                        <div class="navbar-right">
-                            <div class="dropdown">
-                                <button class="btn btn-link btn-xs dropdown-toggle" type="button" id="dd1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                    <i class="fa fa-cog" aria-hidden="true"></i>
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="dd1" style="float: right;">
-                                    <li><a href="#"><i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> Report</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-ban" aria-hidden="true"></i> Ignore</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-bell" aria-hidden="true"></i> Enable notifications for this post</a></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-eye-slash" aria-hidden="true"></i> Hide</a></li>
-                                    <li role="separator" class="divider"></li>
-                                    <li><a href="#"><i class="fa fa-fw fa-trash" aria-hidden="true"></i> Delete</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </span>
-                    <hr>
-                    <div class="post-content">
-                        <p>"Feeling Happy to be a DevOps."</p>
-                    </div>
-                    <hr>
-                    <div>
-                        <div class="pull-right btn-group-xs">
-                            <a class="btn btn-default btn-xs"><i class="fa fa-heart" aria-hidden="true"></i> Like</a>
-                            <a class="btn btn-default btn-xs"><i class="fa fa-comment" aria-hidden="true"></i> Comment</a>
-                        </div>
-                        <div class="pull-left">
-                            <p class="text-muted" style="margin-left:5px;"><i class="fa fa-user-secret" aria-hidden="true"></i> Limited</p>
-                        </div>
-                        <br>
-                    </div>
-                    <hr>
-                    <div>
-                        <a class="btn btn-default btn-xs"><i class="fa fa-bars" aria-hidden="true"></i> Show 12 more comments</a>
+                    <div class="media-body">
                         <hr>
-                        <div class="post-content">
-                            <div class="panel-default">
-                                <div class="panel-body">
-                                    <div class="pull-left">
-                                        <a href="#">
-                                            <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user2.png" width="35px" height="35px" style="margin-right:8px; margin-top:-5px;">
-                                        </a>
-                                    </div>
-                                    <h4><a href="#" style="text-decoration:none;"><strong>Kiran Kumar</strong></a></h4>
-                                    <hr>
-                                    <div class="post-content">
-                                        <p>DevOps has significant importance to any company delivering software or technical services today.Defining DevOps is trickier than you would think, primarily because of its wide usage. It is essentially shorthand, and nothing more than that, for a lean approach to software delivery.</p>
-                                        <br><small><small><a href="#" style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> 12 minutes ago</i></a></small></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <h3><strong>Email</strong></h3>
+                        <p>
+                            <c:choose>
+                                <c:when test="${not empty currentUser.userEmail}">
+                                    <i class="fa fa-envelope"></i> ${currentUser.userEmail}
+                                </c:when>
+                                <c:otherwise>
+                                    <em>Not specified</em>
+                                </c:otherwise>
+                            </c:choose>
+                        </p>
                         <hr>
-                        <div class="post-content">
-                            <div class="panel-default">
-                                <div class="panel-body">
-                                    <div class="pull-left">
-                                        <a href="#">
-                                            <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user3.png" width="35px" height="35px" style="margin-right:8px; margin-top:-5px;">
-                                        </a>
-                                    </div>
-                                    <h4><a href="#" style="text-decoration:none;"><strong>Mi Chleen</strong></a></h4>
-                                    <hr>
-                                    <div class="post-content">
-                                        <p>The secret to DevOps maturity is not technology or process, but people. It takes engaged leadership and all for one cooperation to achieve the kind of results that lead companies to superior IT performance. High-performing DevOps teams can recover 168 times faster from failures and have 60 times fewer failures due to changes, according to the 2015 State of DevOps Report by Puppet Labs. High-performing teams also release code at significantly increasing velocity as their teams grow in size, approaching three deploys per day per developer, for teams of around 1000 developers.</p>
-                                        <br><small><small><a href="#" style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> 9 minutes ago</i></a></small></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <h3><strong>Location</strong></h3>
+                        <p>
+                            <c:choose>
+                                <c:when test="${not empty currentUser.permanentAddress}">
+                                    <i class="fa fa-map-marker"></i> ${currentUser.permanentAddress}
+                                </c:when>
+                                <c:otherwise>
+                                    <em>Not specified</em>
+                                </c:otherwise>
+                            </c:choose>
+                        </p>
                         <hr>
-                        <div class="post-content">
-                            <div class="panel-default">
-                                <div class="panel-body">
-                                    <div class="pull-left">
-                                        <a href="#">
-                                            <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user.png" width="35px" height="35px" style="margin-right:8px; margin-top:-5px;">
-                                        </a>
-                                    </div>
-                                    <h4><a href="#" style="text-decoration:none;"><strong>${pageContext.request.userPrincipal.name}</strong></a></h4>
-                                    <hr>
-                                    <div class="post-content">
-                                        <p>At a time when the speed of application development is vital to commercial success, the DevOps methodology based on communication, collaboration, integration and automation has become one of the biggest IT moves around. However, it is more than just a business philosophy;to do it right requires genuine infrastructure investment and development.</p>
-                                        <br><small><small><a href="#" style="text-decoration:none; color:grey;"><i><i class="fa fa-clock-o" aria-hidden="true"></i> 2 minutes ago</i></a></small></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="media">
-                        <div class="pull-left">
-                            <a href="#">
-                                <img class="media-object img-circle" src="${contextPath}/resources/Images/user/user.png" width="35px" height="35px" style="margin-left:3px; margin-right:-5px;">
-                            </a>
-                        </div>
-                        <div class="media-body">
-                            <textarea class="form-control" rows="1" placeholder="Comment"></textarea>
-                        </div>
+                        <h3><strong>Bio</strong></h3>
+                        <p style="white-space: pre-wrap;">
+                            <c:choose>
+                                <c:when test="${not empty currentUser.skills}">
+                                    ${currentUser.skills}
+                                </c:when>
+                                <c:otherwise>
+                                    <em>No bio information yet. Update your profile to add one!</em>
+                                </c:otherwise>
+                            </c:choose>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- COLONNE DROITE : Timeline publique -->
+    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h2>Fil public</h2>
+                <p class="text-muted">Tous les messages de la communauté</p>
+            </div>
+        </div>
+
+        <!-- Formulaire de création de post -->
+        <div class="post-create-box">
+            <h4>Quoi de neuf ?</h4>
+            <form action="${contextPath}/welcome/post" method="post">
+                <textarea name="content" placeholder="Partagez vos idées..." required maxlength="500"></textarea>
+                <input type="text" name="imageUrl" placeholder="URL de l'image (optionnel)">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-paper-plane" aria-hidden="true"></i> Publier
+                </button>
+                <small class="text-muted pull-right" style="padding-top: 10px;">Max 500 caractères</small>
+            </form>
+        </div>
+
+        <!-- Timeline publique : Affichage de TOUS les posts -->
+        <c:choose>
+            <c:when test="${not empty posts}">
+                <c:forEach items="${posts}" var="post">
+                    <div class="post-card">
+                        <div class="post-header">
+                            <c:choose>
+                                <c:when test="${not empty post.author.profileImg}">
+                                    <img src="${post.author.profileImg}" class="avatar" alt="${post.author.username}">
+                                </c:when>
+                                <c:otherwise>
+                                    <img src="${contextPath}/resources/Images/user/user.png" class="avatar" alt="User">
+                                </c:otherwise>
+                            </c:choose>
+                            <div class="post-info">
+                                <strong>${post.author.username}</strong>
+                                <small><i class="fa fa-clock-o" aria-hidden="true"></i> ${post.timeAgo}</small>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <p style="white-space: pre-wrap;">${post.content}</p>
+                            <c:if test="${not empty post.imageUrl}">
+                                <img src="${post.imageUrl}" class="post-image" alt="Post image">
+                            </c:if>
+                        </div>
+                        <div class="post-actions">
+                            <span class="likes-count">
+                                <i class="fa fa-heart" aria-hidden="true" style="color: #e74c3c;"></i> ${post.likesCount} likes
+                            </span>
+                        </div>
+                    </div>
+                </c:forEach>
+
+                <!-- Pagination -->
+                <c:if test="${totalPages > 1}">
+                    <div style="text-align: center; margin-top: 30px;">
+                        <ul class="pagination">
+                            <c:if test="${hasPrevious}">
+                                <li>
+                                    <a href="${contextPath}/welcome?page=${currentPage - 1}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            </c:if>
+
+                            <c:forEach begin="0" end="${totalPages - 1}" var="i">
+                                <li class="${i == currentPage ? 'active' : ''}">
+                                    <a href="${contextPath}/welcome?page=${i}">${i + 1}</a>
+                                </li>
+                            </c:forEach>
+
+                            <c:if test="${hasNext}">
+                                <li>
+                                    <a href="${contextPath}/welcome?page=${currentPage + 1}" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </c:if>
+                        </ul>
+                    </div>
+                </c:if>
+            </c:when>
+            <c:otherwise>
+                <div class="no-posts">
+                    <i class="fa fa-comments-o fa-5x" aria-hidden="true"></i>
+                    <p>Aucun message pour le moment. Soyez le premier à publier !</p>
+                </div>
+            </c:otherwise>
+        </c:choose>
+    </div>
 </div>
+
 <script type="text/javascript">
 $(function () {
-	  $('[data-toggle="tooltip"]').tooltip()
-	})
-	$(function () {
-	  $('[data-toggle="popover"]').popover()
-	})
+    $('[data-toggle="tooltip"]').tooltip()
+})
+$(function () {
+    $('[data-toggle="popover"]').popover()
+})
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="${contextPath}/resources/js/bootstrap.min.js"></script>

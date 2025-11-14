@@ -13,6 +13,10 @@
 
 		<!-- Protected pages (authentication required) -->
 		<intercept-url pattern="/welcome" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/welcome/**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/my-posts" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/timeline" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/timeline/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/users/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/user/**" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/**" access="hasRole('ROLE_USER')" />

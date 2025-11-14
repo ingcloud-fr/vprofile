@@ -1,6 +1,7 @@
 package com.visualpathit.account.controller;
 
 import com.visualpathit.account.model.User;
+import com.visualpathit.account.service.PostService;
 import com.visualpathit.account.service.ProducerService;
 import com.visualpathit.account.service.SecurityService;
 import com.visualpathit.account.service.UserService;
@@ -10,6 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +27,7 @@ import java.util.UUID;
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final int PAGE_SIZE = 20;
 
     @Autowired
     private UserService userService;
@@ -35,6 +40,9 @@ public class UserController {
 
     @Autowired
     private ProducerService producerService;
+
+    @Autowired
+    private PostService postService;
 
     @GetMapping("/")
     public String home() {
@@ -96,7 +104,8 @@ public class UserController {
     }
 
     @GetMapping("/welcome")
-    public String welcome(Model model) {
+    public String welcome(Model model,
+                         @RequestParam(value = "page", defaultValue = "0") int page) {
         // Get currently logged-in user
         String username = securityService.findLoggedInUsername();
         logger.info("Welcome page accessed by user: {}", username != null ? username : "anonymous");
@@ -112,7 +121,57 @@ public class UserController {
         } else {
             logger.warn("Welcome page accessed without authentication");
         }
+
+        // Get all posts with pagination for the public timeline
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
+        Page postsPage = postService.findAllPosts(pageable);
+
+        model.addAttribute("posts", postsPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", postsPage.getTotalPages());
+        model.addAttribute("totalPosts", postsPage.getTotalElements());
+        model.addAttribute("hasNext", postsPage.hasNext());
+        model.addAttribute("hasPrevious", postsPage.hasPrevious());
+
+        logger.info("Timeline loaded with {} posts", postsPage.getContent().size());
+
         return "welcome";
+    }
+
+    @PostMapping("/welcome/post")
+    public String createPostFromWelcome(@RequestParam("content") String content,
+                                       @RequestParam(value = "imageUrl", required = false) String imageUrl) {
+        logger.info("Creating new post from welcome page");
+
+        // Get current user
+        String username = securityService.findLoggedInUsername();
+        if (username == null) {
+            logger.error("No logged-in user found when creating post");
+            return "redirect:/login";
+        }
+
+        User currentUser = userService.findByUsername(username);
+        if (currentUser == null) {
+            logger.error("User not found: {}", username);
+            return "redirect:/login";
+        }
+
+        // Validate content
+        if (content == null || content.trim().isEmpty()) {
+            logger.warn("Attempted to create post with empty content");
+            return "redirect:/welcome?error=empty";
+        }
+
+        if (content.length() > 500) {
+            logger.warn("Attempted to create post with content exceeding 500 characters");
+            return "redirect:/welcome?error=toolong";
+        }
+
+        // Create post
+        postService.createPost(content, imageUrl, currentUser);
+
+        logger.info("Post created successfully by user: {}", username);
+        return "redirect:/welcome";
     }
 
     @GetMapping("/index")
