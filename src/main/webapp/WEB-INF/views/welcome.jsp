@@ -92,9 +92,8 @@
                                                </div>
                                            </div>
                                            <!-- Logout form -->
-                                          <!-- Logout Form -->
+                                          <!-- Logout Form (CSRF is disabled in security config) -->
                                           <form id="logoutForm" method="POST" action="${contextPath}/logout">
-                                              <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                               <button type="submit" class="btn btn-default btn-sm pull-right">
                                                   <i class="fa fa-power-off" aria-hidden="true"></i> Sign Out
                                               </button>
@@ -525,13 +524,6 @@
             </div>
         </div>
     </div>
-</div>
-<div class="container">
-    <c:if test="${pageContext.request.userPrincipal.name != null}">
-        <form id="logoutForm" method="POST" action="${contextPath}/logout">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        </form>
-    </c:if>
 </div>
 <script type="text/javascript">
 $(function () {

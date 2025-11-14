@@ -6,6 +6,7 @@ import com.visualpathit.account.service.SecurityService;
 import com.visualpathit.account.service.UserService;
 import com.visualpathit.account.utils.MemcachedUtils;
 import com.visualpathit.account.validator.UserValidator;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,13 @@ public class UserController {
     @Autowired
     private ProducerService producerService;
 
+    @GetMapping("/")
+    public String home() {
+        // Redirect authenticated users to welcome page
+        // Non-authenticated users will be redirected to login by Spring Security
+        return "redirect:/welcome";
+    }
+
     @GetMapping("/registration")
     public String registration(Model model) {
         model.addAttribute("userForm", new User());
@@ -42,7 +50,8 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public String registration(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
+    public String registration(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult,
+                              Model model, HttpServletRequest request) {
         logger.info("Registration attempt for username: {}", userForm.getUsername());
 
         userValidator.validate(userForm, bindingResult);
@@ -55,7 +64,7 @@ public class UserController {
         userService.save(userForm);
         logger.info("User created successfully: {}", userForm.getUsername());
 
-        boolean loginSuccessful = securityService.autologin(userForm.getUsername(), userForm.getPasswordConfirm());
+        boolean loginSuccessful = securityService.autologin(userForm.getUsername(), userForm.getPasswordConfirm(), request);
         if (!loginSuccessful) {
             logger.error("Auto-login failed after registration for user: {}, redirecting to login page", userForm.getUsername());
             model.addAttribute("message", "Account created successfully! Please login.");
