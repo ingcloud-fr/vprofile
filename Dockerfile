@@ -14,7 +14,7 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Runtime avec Tomcat
-FROM tomcat:9-jdk17-temurin-jammy
+FROM tomcat:10.1-jdk17-temurin-jammy
 
 # Supprimer les apps par défaut de Tomcat
 RUN rm -rf /usr/local/tomcat/webapps/*
