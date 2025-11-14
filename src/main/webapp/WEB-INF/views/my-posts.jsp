@@ -116,10 +116,17 @@
                                         <span class="user-avatar pull-left" style="margin-right: 8px; margin-top: -5px;">
                                             <c:choose>
                                                 <c:when test="${not empty currentUser.profileImg}">
-                                                    <img src="${currentUser.profileImg}" class="img-responsive img-circle" alt="${currentUser.username}" width="30px" height="30px">
+                                                    <img src="${contextPath}${currentUser.profileImg}"
+                                                         class="img-responsive img-circle"
+                                                         alt="${currentUser.username}"
+                                                         width="30px" height="30px"
+                                                         onerror="this.src='${contextPath}/resources/Images/default-avatar.png'">
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <img src="${contextPath}/resources/Images/user/user.png" class="img-responsive img-circle" alt="User" width="30px" height="30px">
+                                                    <img src="${contextPath}/resources/Images/default-avatar.png"
+                                                         class="img-responsive img-circle"
+                                                         alt="User"
+                                                         width="30px" height="30px">
                                                 </c:otherwise>
                                             </c:choose>
                                         </span>
@@ -133,10 +140,17 @@
                                                     <div class="col-md-5">
                                                         <c:choose>
                                                             <c:when test="${not empty currentUser.profileImg}">
-                                                                <img src="${currentUser.profileImg}" alt="Profile" class="img-responsive" width="120px" height="120px" />
+                                                                <img src="${contextPath}${currentUser.profileImg}"
+                                                                     alt="Profile"
+                                                                     class="img-responsive"
+                                                                     width="120px" height="120px"
+                                                                     onerror="this.src='${contextPath}/resources/Images/default-avatar.png'" />
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <img src="${contextPath}/resources/Images/user/user.png" alt="Profile" class="img-responsive" width="120px" height="120px" />
+                                                                <img src="${contextPath}/resources/Images/default-avatar.png"
+                                                                     alt="Profile"
+                                                                     class="img-responsive"
+                                                                     width="120px" height="120px" />
                                                             </c:otherwise>
                                                         </c:choose>
                                                         <p class="text-center small">
@@ -199,10 +213,15 @@
                             <div class="post-header">
                                 <c:choose>
                                     <c:when test="${not empty post.author.profileImg}">
-                                        <img src="${post.author.profileImg}" class="avatar" alt="${post.author.username}">
+                                        <img src="${contextPath}${post.author.profileImg}"
+                                             class="avatar"
+                                             alt="${post.author.username}"
+                                             onerror="this.src='${contextPath}/resources/Images/default-avatar.png'">
                                     </c:when>
                                     <c:otherwise>
-                                        <img src="${contextPath}/resources/Images/user/user.png" class="avatar" alt="User">
+                                        <img src="${contextPath}/resources/Images/default-avatar.png"
+                                             class="avatar"
+                                             alt="User">
                                     </c:otherwise>
                                 </c:choose>
                                 <div class="post-info">

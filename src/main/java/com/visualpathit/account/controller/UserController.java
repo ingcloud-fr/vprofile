@@ -7,6 +7,7 @@ import com.visualpathit.account.service.SecurityService;
 import com.visualpathit.account.service.UserService;
 import com.visualpathit.account.utils.MemcachedUtils;
 import com.visualpathit.account.validator.UserValidator;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,9 @@ public class UserController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private ServletContext servletContext;
 
     @GetMapping("/")
     public String home() {
@@ -293,13 +297,17 @@ public class UserController {
             // Generate unique filename (always save as JPG)
             String filename = UUID.randomUUID().toString() + ".jpg";
 
-            // Create upload directory if it doesn't exist
-            // Use webapp directory for file storage
-            String webappPath = System.getProperty("catalina.home");
-            if (webappPath == null) {
-                webappPath = System.getProperty("user.dir");
+            // Get the real path to the webapp resources directory
+            // This ensures images are saved in the correct location
+            String realPath = servletContext.getRealPath("/resources/Images/profiles");
+
+            if (realPath == null) {
+                logger.error("Failed to get real path for resources directory");
+                return "redirect:/welcome?error=uploadFailed";
             }
-            Path uploadPath = Paths.get(webappPath, "webapps", "ROOT", "resources", "Images", "profiles");
+
+            Path uploadPath = Paths.get(realPath);
+            logger.info("Upload directory path: {}", uploadPath);
 
             // Create directory if it doesn't exist
             if (!Files.exists(uploadPath)) {
@@ -310,16 +318,29 @@ public class UserController {
             // Save the cropped and resized image
             Path filePath = uploadPath.resolve(filename);
             ImageIO.write(squareImage, "jpg", filePath.toFile());
-            logger.info("Cropped image saved successfully: {}", filePath);
+            logger.info("Image saved successfully to: {}", filePath);
 
-            // Update user profile image URL
+            // IMPORTANT: Store relative URL starting with /
             String photoUrl = "/resources/Images/profiles/" + filename;
             user.setProfileImg(photoUrl);
             user.setProfileImgPath(filePath.toString());
-            userService.save(user);
+
+            // Use update() instead of save() to avoid re-encoding password
+            userService.update(user);
+
+            logger.info("Photo URL saved to database: {}", photoUrl);
+            logger.info("File path saved to database: {}", filePath);
+
+            // Verify file was actually saved
+            if (Files.exists(filePath)) {
+                logger.info("File verified to exist at: {}", filePath);
+            } else {
+                logger.error("File was NOT saved correctly at: {}", filePath);
+            }
 
             // IMPORTANT: Update session to refresh navbar photo
             session.setAttribute("currentUser", user);
+            logger.info("Session updated with new profile photo");
 
             logger.info("Profile photo updated successfully for user: {}", username);
             return "redirect:/welcome?success=photoUploaded";
