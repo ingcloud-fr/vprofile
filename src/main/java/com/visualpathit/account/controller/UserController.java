@@ -6,6 +6,8 @@ import com.visualpathit.account.service.SecurityService;
 import com.visualpathit.account.service.UserService;
 import com.visualpathit.account.utils.MemcachedUtils;
 import com.visualpathit.account.validator.UserValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,8 @@ import java.util.UUID;
 
 @Controller
 public class UserController {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private UserService userService;
@@ -39,29 +43,45 @@ public class UserController {
 
     @PostMapping("/registration")
     public String registration(@ModelAttribute("userForm") @Valid User userForm, BindingResult bindingResult, Model model) {
+        logger.info("Registration attempt for username: {}", userForm.getUsername());
+
         userValidator.validate(userForm, bindingResult);
 
         if (bindingResult.hasErrors()) {
+            logger.warn("Registration validation failed for username: {}", userForm.getUsername());
             return "registration";
         }
 
         userService.save(userForm);
+        logger.info("User created successfully: {}", userForm.getUsername());
+
         boolean loginSuccessful = securityService.autologin(userForm.getUsername(), userForm.getPasswordConfirm());
         if (!loginSuccessful) {
-            return "redirect:/login?error";
+            logger.error("Auto-login failed after registration for user: {}, redirecting to login page", userForm.getUsername());
+            model.addAttribute("message", "Account created successfully! Please login.");
+            return "redirect:/login?registered";
         }
 
+        logger.info("Registration and auto-login successful for user: {}, redirecting to welcome page", userForm.getUsername());
         return "redirect:/welcome";
     }
 
     @GetMapping("/login")
-    public String login(Model model, @RequestParam(value = "error", required = false) String error,
-                        @RequestParam(value = "logout", required = false) String logout) {
+    public String login(Model model,
+                        @RequestParam(value = "error", required = false) String error,
+                        @RequestParam(value = "logout", required = false) String logout,
+                        @RequestParam(value = "registered", required = false) String registered) {
         if (error != null) {
+            logger.warn("Login page accessed with error parameter");
             model.addAttribute("error", "Your username and password is invalid.");
         }
         if (logout != null) {
+            logger.info("Login page accessed after logout");
             model.addAttribute("message", "You have been logged out successfully.");
+        }
+        if (registered != null) {
+            logger.info("Login page accessed after successful registration");
+            model.addAttribute("message", "Account created successfully! Please login with your credentials.");
         }
         return "login";
     }
@@ -70,9 +90,18 @@ public class UserController {
     public String welcome(Model model) {
         // Get currently logged-in user
         String username = securityService.findLoggedInUsername();
+        logger.info("Welcome page accessed by user: {}", username != null ? username : "anonymous");
+
         if (username != null) {
             User currentUser = userService.findByUsername(username);
-            model.addAttribute("currentUser", currentUser);
+            if (currentUser != null) {
+                model.addAttribute("currentUser", currentUser);
+                logger.info("User profile loaded successfully for: {}", username);
+            } else {
+                logger.error("User not found in database: {}", username);
+            }
+        } else {
+            logger.warn("Welcome page accessed without authentication");
         }
         return "welcome";
     }
