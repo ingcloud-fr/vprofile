@@ -70,7 +70,8 @@ services:
         condition: service_started
     volumes:
       # Volume pour la persistence des photos de profil uploadées
-      - profile-images:/usr/local/tomcat/webapps/ROOT/resources/Images/profiles
+      # Utilise un chemin externe dédié pour éviter les conflits avec le WAR déployé
+      - profile-images:/var/lib/vprofile/uploads/profiles
     environment:
       # MySQL Configuration
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/accounts
