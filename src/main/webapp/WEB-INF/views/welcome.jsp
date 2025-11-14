@@ -76,7 +76,7 @@
                                                             ${pageContext.request.userPrincipal.name}@hkhinfotech.co.in
                                                         </p>
                                                         <div class="divider"></div>
-                                                        <a href="#" class="btn btn-default btn-xs"><i class="fa fa-user-o" aria-hidden="true"></i> Update Profile </a>
+                                                        <a href="${contextPath}/user/${pageContext.request.userPrincipal.name}" class="btn btn-default btn-xs"><i class="fa fa-user-o" aria-hidden="true"></i> Update Profile </a>
                                                         <a href="#" class="btn btn-default btn-xs"><i class="fa fa-address-card-o" aria-hidden="true"></i> Contacts</a>
                                                         <a href="#" class="btn btn-default btn-xs"><i class="fa fa-cogs" aria-hidden="true"></i> Settings</a>
                                                         <a href="#" class="btn btn-default btn-xs"><i class="fa fa-question-circle-o" aria-hidden="true"></i> Help!</a>
@@ -93,7 +93,7 @@
                                            </div>
                                            <!-- Logout form -->
                                           <!-- Logout Form -->
-                                          <form id="logoutForm" method="POST" action="${contextPath}">
+                                          <form id="logoutForm" method="POST" action="${contextPath}/logout">
                                               <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                               <button type="submit" class="btn btn-default btn-sm pull-right">
                                                   <i class="fa fa-power-off" aria-hidden="true"></i> Sign Out
@@ -124,17 +124,41 @@
                         </div>
                         <div class="media-body">
                             <hr>
-                            <h3><strong>Bio</strong></h3>
-                            <p>DevOps For Product Management and Strategy of Application Delivery at HKH Infotech. Responsible of providing customers with counsel on their DevOps strategies to help them deliver higher quality software and services to market faster.</p>
+                            <h3><strong>Email</strong></h3>
+                            <p>
+                                <c:choose>
+                                    <c:when test="${not empty currentUser.userEmail}">
+                                        <i class="fa fa-envelope"></i> ${currentUser.userEmail}
+                                    </c:when>
+                                    <c:otherwise>
+                                        <em>Not specified</em>
+                                    </c:otherwise>
+                                </c:choose>
+                            </p>
                             <hr>
                             <h3><strong>Location</strong></h3>
-                            <p>Earth</p>
+                            <p>
+                                <c:choose>
+                                    <c:when test="${not empty currentUser.permanentAddress}">
+                                        <i class="fa fa-map-marker"></i> ${currentUser.permanentAddress}
+                                    </c:when>
+                                    <c:otherwise>
+                                        <em>Not specified</em>
+                                    </c:otherwise>
+                                </c:choose>
+                            </p>
                             <hr>
-                            <h3><strong>Gender</strong></h3>
-                            <p>Unknown</p>
-                            <hr>
-                            <h3><strong>Birthday</strong></h3>
-                            <p>January 01 1901</p>
+                            <h3><strong>Bio</strong></h3>
+                            <p style="white-space: pre-wrap;">
+                                <c:choose>
+                                    <c:when test="${not empty currentUser.skills}">
+                                        ${currentUser.skills}
+                                    </c:when>
+                                    <c:otherwise>
+                                        <em>No bio information yet. Update your profile to add one!</em>
+                                    </c:otherwise>
+                                </c:choose>
+                            </p>
                         </div>
                     </div>
                 </div>

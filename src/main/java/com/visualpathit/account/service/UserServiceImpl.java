@@ -27,7 +27,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public void save(final User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoles(new HashSet<>(roleRepository.findAll()));
+        // Assign only ROLE_USER to new users (not ROLE_ADMIN)
+        HashSet<com.visualpathit.account.model.Role> userRoles = new HashSet<>();
+        com.visualpathit.account.model.Role userRole = roleRepository.findByName("ROLE_USER");
+        if (userRole != null) {
+            userRoles.add(userRole);
+        }
+        user.setRoles(userRoles);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void update(final User user) {
+        // Update user profile without touching password and roles
         userRepository.save(user);
     }
 

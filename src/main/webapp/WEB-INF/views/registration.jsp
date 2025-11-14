@@ -117,7 +117,7 @@
                     <!-- Login link -->
                     <div class="flex-col-c p-t-155">
                         <span class="txt1 p-b-17">Already have an account?</span>
-                        <a href="${contextPath}" class="txt2">Login</a>
+                        <a href="${contextPath}/login" class="txt2">Login</a>
                     </div>
                 </form:form>
             </div>

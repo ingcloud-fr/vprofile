@@ -22,7 +22,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public String findLoggedInUsername() {
-        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getDetails();
+        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userDetails instanceof UserDetails) {
             return ((UserDetails) userDetails).getUsername();
         }
@@ -31,18 +31,26 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public boolean autologin(final String username, final String password) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+        try {
+            logger.info("Attempting auto-login for user: {}", username);
 
-        authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                    new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 
-        if (usernamePasswordAuthenticationToken.isAuthenticated()) {
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            logger.debug(String.format("Auto login %s successfully!", username));
-            return true;
+            authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+
+            if (usernamePasswordAuthenticationToken.isAuthenticated()) {
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                logger.info("Auto-login successful for user: {}", username);
+                return true;
+            }
+
+            logger.warn("Auto-login failed - authentication token not authenticated for user: {}", username);
+            return false;
+        } catch (Exception e) {
+            logger.error("Auto-login failed with exception for user: {}", username, e);
+            return false;
         }
-        logger.debug(String.format("Auto login %s failed!", username));
-        return false;
     }
 }

@@ -6,12 +6,26 @@
 						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<http auto-config="true">
-		<intercept-url pattern="/" access="hasRole('ROLE_USER')" />
+		<!-- Public pages (no authentication required) -->
+		<intercept-url pattern="/login" access="permitAll" />
+		<intercept-url pattern="/registration" access="permitAll" />
+		<intercept-url pattern="/resources/**" access="permitAll" />
+
+		<!-- Protected pages (authentication required) -->
 		<intercept-url pattern="/welcome" access="hasRole('ROLE_USER')" />
-		<form-login login-page="/login" default-target-url="/welcome"
+		<intercept-url pattern="/users/**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/user/**" access="hasRole('ROLE_USER')" />
+		<intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+
+		<form-login login-page="/login"
+			default-target-url="/welcome"
+			always-use-default-target="true"
 			authentication-failure-url="/login?error"
-			username-parameter="username" password-parameter="password" />
+			username-parameter="username"
+			password-parameter="password" />
 		<logout logout-success-url="/login?logout" />
+
+		<!-- CSRF disabled for legacy JSP compatibility -->
 		<csrf disabled="true" />
 	</http>
 
