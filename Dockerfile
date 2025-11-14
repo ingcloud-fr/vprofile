@@ -16,6 +16,9 @@ RUN mvn clean package -DskipTests
 # Stage 2: Runtime avec Tomcat
 FROM tomcat:10.1-jdk17-temurin-jammy
 
+# Installer unzip pour décompresser le WAR
+RUN apt-get update && apt-get install -y unzip && rm -rf /var/lib/apt/lists/*
+
 # Supprimer les apps par défaut de Tomcat
 RUN rm -rf /usr/local/tomcat/webapps/*
 
