@@ -1,0 +1,78 @@
+services:
+  # Base de données MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: vprofile-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: vpropassword
+      MYSQL_DATABASE: accounts
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./src/main/resources/db_backup.sql:/docker-entrypoint-initdb.d/db_backup.sql
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cache Memcached
+  memcached:
+    image: memcached:alpine
+    container_name: vprofile-memcached
+    ports:
+      - "11211:11211"
+
+  # Message Queue RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: vprofile-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"      # AMQP
+      - "15672:15672"    # Management UI
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ElasticSearch
+  elasticsearch:
+    image: elasticsearch:7.17.18
+    container_name: vprofile-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+  # Application vProfile (Tomcat)
+  app:
+    build: .
+    container_name: vprofile-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      memcached:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_started
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/accounts
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=vpropassword
+
+volumes:
+  mysql-data:
+  es-data:

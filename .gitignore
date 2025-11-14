@@ -1,0 +1,89 @@
+# ============================================
+# MAVEN
+# ============================================
+target/                    # ← Dossier de build Maven (comme node_modules)
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ============================================
+# JAVA
+# ============================================
+*.class                    # Fichiers compilés
+*.jar                      # (sauf si tu veux versionner des libs)
+*.war                      # WAR généré par Maven
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# ============================================
+# LOGS
+# ============================================
+*.log
+logs/
+*.log.*
+
+# ============================================
+# IDE (IntelliJ, Eclipse, VSCode)
+# ============================================
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata/
+bin/
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# ============================================
+# SYSTEM FILES
+# ============================================
+.DS_Store              # macOS
+Thumbs.db              # Windows
+*.swp                  # Vim
+*.swo
+*~
+.directory             # Linux
+
+# ============================================
+# DOCKER (optionnel)
+# ============================================
+# Si tu ne veux pas versionner les volumes Docker locaux
+# docker-compose.override.yml
+
+# ============================================
+# VAGRANT (déjà supprimé chez toi)
+# ============================================
+.vagrant/
+*.box
+
+# ============================================
+# TEMP FILES
+# ============================================
+*.tmp
+*.bak
+*.swp
+*.cache
