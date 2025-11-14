@@ -9,9 +9,11 @@ import com.visualpathit.account.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -23,7 +25,7 @@ import java.util.Set;
  * - 5 welcome posts from admin
  */
 @Component
-public class DataInitializer implements CommandLineRunner {
+public class DataInitializer implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
@@ -39,8 +41,14 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private boolean alreadySetup = false;
+
     @Override
-    public void run(String... args) throws Exception {
+    @Transactional
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (alreadySetup) {
+            return;
+        }
         logger.info("Starting data initialization...");
 
         // Check if admin already exists
@@ -87,6 +95,7 @@ public class DataInitializer implements CommandLineRunner {
         // Create 5 welcome posts from admin
         createAdminPosts(admin);
 
+        alreadySetup = true;
         logger.info("Data initialization completed successfully!");
     }
 
