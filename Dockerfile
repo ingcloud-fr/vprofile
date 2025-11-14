@@ -30,11 +30,12 @@ RUN cd /usr/local/tomcat/webapps && \
     unzip -q ROOT.war -d ROOT && \
     rm ROOT.war
 
-# Créer le répertoire pour les uploads persistants (volume Docker)
-RUN mkdir -p /var/lib/vprofile/uploads/profiles
+# Copier le script d'entrypoint
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Exposer le port
 EXPOSE 8080
 
-# Démarrer Tomcat
-CMD ["catalina.sh", "run"]
+# Utiliser le script d'entrypoint qui créera le répertoire au démarrage
+ENTRYPOINT ["docker-entrypoint.sh"]

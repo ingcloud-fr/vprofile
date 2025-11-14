@@ -356,13 +356,51 @@ public class UserController {
                 logger.info("Created upload directory: {}", uploadPath);
             }
 
+            // Check directory permissions
+            logger.debug("Directory readable: {}", Files.isReadable(uploadPath));
+            logger.debug("Directory writable: {}", Files.isWritable(uploadPath));
+            logger.debug("Directory executable: {}", Files.isExecutable(uploadPath));
+
             // Save the cropped and resized image
             Path filePath = uploadPath.resolve(filename);
             logger.debug("Full file path: {}", filePath);
             logger.debug("Saving image to disk");
 
-            ImageIO.write(squareImage, "jpg", filePath.toFile());
+            // Use try-with-resources to ensure file is properly flushed and closed
+            try (var outputStream = Files.newOutputStream(filePath)) {
+                ImageIO.write(squareImage, "jpg", outputStream);
+                outputStream.flush(); // Ensure data is written to disk
+            }
             logger.info("Image saved successfully to: {}", filePath);
+
+            // Immediate verification after write
+            boolean fileExistsImmediately = Files.exists(filePath);
+            logger.debug("File exists IMMEDIATELY after write: {}", fileExistsImmediately);
+
+            if (fileExistsImmediately) {
+                long fileSize = Files.size(filePath);
+                logger.info("File IMMEDIATELY verified to exist, size: {} bytes", fileSize);
+
+                // Check file permissions
+                logger.debug("File readable: {}", Files.isReadable(filePath));
+                logger.debug("File writable: {}", Files.isWritable(filePath));
+
+                // List directory contents to confirm
+                logger.debug("Directory contents:");
+                try (var stream = Files.list(uploadPath)) {
+                    stream.forEach(path -> logger.debug("  - {}", path.getFileName()));
+                }
+            } else {
+                logger.error("File was NOT saved correctly at: {}", filePath);
+
+                // Debug: List directory contents
+                logger.debug("Directory contents after failed write:");
+                try (var stream = Files.list(uploadPath)) {
+                    stream.forEach(path -> logger.debug("  - {}", path.getFileName()));
+                } catch (IOException listEx) {
+                    logger.error("Cannot list directory: {}", listEx.getMessage());
+                }
+            }
 
             // IMPORTANT: Store relative URL starting with /
             // This URL will be served by Spring's ResourceHandler configuration
@@ -380,11 +418,11 @@ public class UserController {
             logger.info("Photo URL saved to database: {}", photoUrl);
             logger.info("File path saved to database: {}", filePath);
 
-            // Verify file was actually saved
-            boolean fileExists = Files.exists(filePath);
-            logger.debug("File exists after save: {}", fileExists);
+            // Verify file again after database update
+            boolean fileExistsAfterDB = Files.exists(filePath);
+            logger.debug("File exists AFTER database update: {}", fileExistsAfterDB);
 
-            if (fileExists) {
+            if (fileExistsAfterDB) {
                 long fileSize = Files.size(filePath);
                 logger.info("File verified to exist at: {}, size: {} bytes", filePath, fileSize);
             } else {
