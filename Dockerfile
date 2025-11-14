@@ -22,6 +22,12 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 # Copier le WAR depuis le stage de build
 COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
+# Décompresser le WAR manuellement pour permettre au volume Docker de se monter correctement
+RUN cd /usr/local/tomcat/webapps && \
+    unzip -q ROOT.war -d ROOT && \
+    rm ROOT.war && \
+    mkdir -p ROOT/resources/Images/profiles
+
 # Exposer le port
 EXPOSE 8080
 
