@@ -47,6 +47,12 @@ public class PostLikeService {
             // Unlike: remove the like
             logger.debug("User {} already liked post {}, removing like", user.getUsername(), postId);
             postLikeRepository.deleteByPostAndUser(post, user);
+
+            // Update likes count
+            long newCount = postLikeRepository.countByPost(post);
+            post.setLikesCount((int) newCount);
+            postRepository.save(post);
+
             logger.info("Post {} unliked by user {}", postId, user.getUsername());
             return false;
         } else {
@@ -54,6 +60,12 @@ public class PostLikeService {
             logger.debug("User {} has not liked post {}, creating like", user.getUsername(), postId);
             PostLike like = new PostLike(post, user);
             postLikeRepository.save(like);
+
+            // Update likes count
+            long newCount = postLikeRepository.countByPost(post);
+            post.setLikesCount((int) newCount);
+            postRepository.save(post);
+
             logger.info("Post {} liked by user {}", postId, user.getUsername());
             return true;
         }

@@ -103,8 +103,8 @@ public class Post implements Serializable {
     }
 
     public int getLikesCount() {
-        // Use the size of the likes collection if available, otherwise return the stored count
-        return (likes != null && !likes.isEmpty()) ? likes.size() : likesCount;
+        // Return the stored count directly to avoid lazy loading issues
+        return likesCount;
     }
 
     public void setLikesCount(int likesCount) {
