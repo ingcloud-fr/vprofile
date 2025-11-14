@@ -8,8 +8,12 @@
 		</encoder>
 	</appender>
 
-	<!-- Turn off all logging for specific packages -->
-	<logger name="com.visualpathit.account" level="OFF" />
+	<!-- Enable DEBUG logging for UserController to see upload photo logs -->
+	<logger name="com.visualpathit.account.controller.UserController" level="DEBUG" />
+
+	<!-- Turn off all other logging for specific packages -->
+	<logger name="com.visualpathit.account.service" level="OFF" />
+	<logger name="com.visualpathit.account.validator" level="OFF" />
 	<logger name="org.springframework" level="OFF" />
 	<logger name="org.hibernate" level="OFF" />
 	<logger name="org.hibernate.SQL" level="OFF" />
@@ -17,7 +21,7 @@
 
 	<!-- Root logging configuration -->
 	<root>
-		<level value="OFF" />
+		<level value="WARN" />
 		<appender-ref ref="STDOUT" />
 	</root>
 
