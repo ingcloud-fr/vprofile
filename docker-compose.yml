@@ -9,7 +9,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./src/main/resources/db_backup.sql:/docker-entrypoint-initdb.d/db_backup.sql
+      # db_backup.sql désactivé car Flyway gère maintenant le schéma complet
+      # - ./src/main/resources/db_backup.sql:/docker-entrypoint-initdb.d/db_backup.sql
       - mysql-data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
