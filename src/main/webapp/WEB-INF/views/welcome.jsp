@@ -79,9 +79,31 @@
             border-top: 1px solid #eee;
             padding-top: 10px;
         }
-        .likes-count {
-            color: #666;
+        .btn-like {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
             font-size: 14px;
+            color: #666;
+        }
+        .btn-like:hover {
+            background: #f8f9fa;
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        .btn-like.liked {
+            background: #ffe6e6;
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        .btn-like.liked:hover {
+            background: #ffcccc;
+        }
+        .btn-like i {
+            margin-right: 4px;
         }
         .no-posts {
             text-align: center;
@@ -375,9 +397,28 @@
                             </c:if>
                         </div>
                         <div class="post-actions">
-                            <span class="likes-count">
-                                <i class="fa fa-heart" aria-hidden="true" style="color: #e74c3c;"></i> ${post.likesCount} likes
-                            </span>
+                            <form action="${contextPath}/post/${post.id}/like" method="post" style="display:inline;">
+                                <c:choose>
+                                    <c:when test="${post.likedByCurrentUser}">
+                                        <button type="submit" class="btn-like liked">
+                                            <i class="fa fa-heart" aria-hidden="true"></i> ${post.likesCount}
+                                            <c:choose>
+                                                <c:when test="${post.likesCount <= 1}">like</c:when>
+                                                <c:otherwise>likes</c:otherwise>
+                                            </c:choose>
+                                        </button>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <button type="submit" class="btn-like">
+                                            <i class="fa fa-heart-o" aria-hidden="true"></i> ${post.likesCount}
+                                            <c:choose>
+                                                <c:when test="${post.likesCount <= 1}">like</c:when>
+                                                <c:otherwise>likes</c:otherwise>
+                                            </c:choose>
+                                        </button>
+                                    </c:otherwise>
+                                </c:choose>
+                            </form>
                         </div>
                     </div>
                 </c:forEach>

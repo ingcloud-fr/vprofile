@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entity representing a post on the timeline/wall
@@ -31,6 +33,13 @@ public class Post implements Serializable {
 
     @Column(name = "likes_count")
     private int likesCount = 0;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<PostLike> likes = new HashSet<>();
+
+    // Transient field to track if current user has liked this post
+    @Transient
+    private boolean likedByCurrentUser = false;
 
     // Constructors
     public Post() {
@@ -94,11 +103,55 @@ public class Post implements Serializable {
     }
 
     public int getLikesCount() {
-        return likesCount;
+        // Use the size of the likes collection if available, otherwise return the stored count
+        return (likes != null && !likes.isEmpty()) ? likes.size() : likesCount;
     }
 
     public void setLikesCount(int likesCount) {
         this.likesCount = likesCount;
+    }
+
+    public Set<PostLike> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<PostLike> likes) {
+        this.likes = likes;
+    }
+
+    public boolean isLikedByCurrentUser() {
+        return likedByCurrentUser;
+    }
+
+    public void setLikedByCurrentUser(boolean likedByCurrentUser) {
+        this.likedByCurrentUser = likedByCurrentUser;
+    }
+
+    /**
+     * Helper method to check if a specific user has liked this post
+     */
+    public boolean isLikedBy(User user) {
+        if (likes == null || user == null) {
+            return false;
+        }
+        return likes.stream()
+                .anyMatch(like -> like.getUser().getId().equals(user.getId()));
+    }
+
+    /**
+     * Add a like to this post
+     */
+    public void addLike(PostLike like) {
+        likes.add(like);
+        like.setPost(this);
+    }
+
+    /**
+     * Remove a like from this post
+     */
+    public void removeLike(PostLike like) {
+        likes.remove(like);
+        like.setPost(null);
     }
 
     /**
