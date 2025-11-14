@@ -1,10 +1,13 @@
 package com.visualpathit.account.service;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,7 +33,7 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public boolean autologin(final String username, final String password) {
+    public boolean autologin(final String username, final String password, final HttpServletRequest request) {
         try {
             logger.info("Attempting auto-login for user: {}", username);
 
@@ -42,8 +45,15 @@ public class SecurityServiceImpl implements SecurityService {
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
             // Set the authentication in the security context
-            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            logger.info("Auto-login successful for user: {}", username);
+            SecurityContext securityContext = SecurityContextHolder.getContext();
+            securityContext.setAuthentication(usernamePasswordAuthenticationToken);
+
+            // CRITICAL: Persist the SecurityContext in the HTTP session
+            // This ensures the authentication survives the redirect
+            HttpSession session = request.getSession(true);
+            session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+
+            logger.info("Auto-login successful for user: {}, SecurityContext saved to session", username);
             return true;
         } catch (Exception e) {
             logger.error("Auto-login failed with exception for user: {}", username, e);
