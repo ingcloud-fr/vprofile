@@ -69,9 +69,21 @@ services:
       elasticsearch:
         condition: service_started
     environment:
+      # MySQL Configuration
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/accounts
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=vpropassword
+      # Memcached Configuration
+      - MEMCACHED_ACTIVE_HOST=memcached
+      - MEMCACHED_ACTIVE_PORT=11211
+      # RabbitMQ Configuration
+      - RABBITMQ_ADDRESS=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      # ElasticSearch Configuration
+      - ELASTICSEARCH_HOST=elasticsearch
+      - ELASTICSEARCH_PORT=9300
 
 volumes:
   mysql-data:
