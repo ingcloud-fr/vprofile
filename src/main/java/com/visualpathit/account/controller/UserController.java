@@ -68,6 +68,12 @@ public class UserController {
 
     @GetMapping("/welcome")
     public String welcome(Model model) {
+        // Get currently logged-in user
+        String username = securityService.findLoggedInUsername();
+        if (username != null) {
+            User currentUser = userService.findByUsername(username);
+            model.addAttribute("currentUser", currentUser);
+        }
         return "welcome";
     }
 
@@ -117,8 +123,8 @@ public class UserController {
     public String userUpdateProfile(@PathVariable("username") String username, @ModelAttribute("user") User userForm) {
         User user = userService.findByUsername(username);
         updateUserDetails(user, userForm);
-        userService.save(user);
-        return "welcome";
+        userService.update(user);
+        return "redirect:/welcome";
     }
 
 //    @GetMapping("/user/rabbit")

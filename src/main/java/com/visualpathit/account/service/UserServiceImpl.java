@@ -38,6 +38,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void update(final User user) {
+        // Update user profile without touching password and roles
+        userRepository.save(user);
+    }
+
+    @Override
     public User findByUsername(final String username) {
         return userRepository.findByUsername(username);
     }
