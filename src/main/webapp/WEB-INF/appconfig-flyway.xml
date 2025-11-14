@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+    Flyway Configuration for Database Migrations
+    Uses FlywayFactory to properly configure Flyway 9.x with its fluent API
+    -->
+
+    <!-- FlywayFactory bean to create and configure Flyway -->
+    <bean id="flywayFactory" class="com.visualpathit.account.config.FlywayFactory">
+        <property name="dataSource" ref="dataSource" />
+
+        <!-- Location of migration scripts -->
+        <property name="locations">
+            <array>
+                <value>classpath:db/migration</value>
+            </array>
+        </property>
+
+        <!-- Baseline settings for existing databases -->
+        <property name="baselineOnMigrate" value="true" />
+        <property name="baselineVersion" value="0" />
+
+        <!-- Validate migrations on startup -->
+        <property name="validateOnMigrate" value="true" />
+
+        <!-- Schema to manage -->
+        <property name="schemas">
+            <array>
+                <value>accounts</value>
+            </array>
+        </property>
+    </bean>
+
+    <!-- Flyway bean created via factory method -->
+    <bean id="flyway" factory-bean="flywayFactory" factory-method="createFlyway" />
+
+</beans>

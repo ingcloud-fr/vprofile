@@ -12,6 +12,10 @@
 	<logger name="com.visualpathit.account.controller.UserController" level="DEBUG" />
 	<logger name="com.visualpathit.account.service.PostLikeService" level="DEBUG" />
 
+	<!-- Enable INFO logging for Flyway migrations (pédagogique) -->
+	<logger name="com.visualpathit.account.config.FlywayFactory" level="INFO" />
+	<logger name="org.flywaydb" level="INFO" />
+
 	<!-- Turn off all other logging for specific packages -->
 	<logger name="com.visualpathit.account.validator" level="OFF" />
 	<logger name="org.springframework" level="OFF" />
