@@ -1,6 +1,8 @@
 package com.visualpathit.account.config;
 
 import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.MigrationInfo;
+import org.flywaydb.core.api.output.MigrateResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,14 @@ public class FlywayFactory {
      * Create and configure a Flyway instance, then execute migrations
      */
     public Flyway createFlyway() {
-        logger.info("Configuring Flyway for database migrations...");
+        logger.info("========================================");
+        logger.info("FLYWAY DATABASE MIGRATION - STARTING");
+        logger.info("========================================");
+        logger.info("Configuration:");
+        logger.info("  - Migration locations: {}", String.join(", ", locations));
+        logger.info("  - Target schemas: {}", String.join(", ", schemas));
+        logger.info("  - Baseline on migrate: {}", baselineOnMigrate);
+        logger.info("  - Validate on migrate: {}", validateOnMigrate);
 
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
@@ -37,9 +46,28 @@ public class FlywayFactory {
                 .schemas(schemas)
                 .load();
 
+        logger.info("Checking for pending migrations...");
+        MigrationInfo[] pendingMigrations = flyway.info().pending();
+        if (pendingMigrations.length > 0) {
+            logger.info("Found {} pending migration(s) to apply:", pendingMigrations.length);
+            for (MigrationInfo info : pendingMigrations) {
+                logger.info("  - V{}: {}", info.getVersion(), info.getDescription());
+            }
+        } else {
+            logger.info("No pending migrations found - database is up to date");
+        }
+
         logger.info("Executing Flyway migrations...");
-        flyway.migrate();
-        logger.info("Flyway migrations completed successfully");
+        MigrateResult result = flyway.migrate();
+
+        logger.info("========================================");
+        logger.info("FLYWAY MIGRATION COMPLETED");
+        logger.info("========================================");
+        logger.info("Migration summary:");
+        logger.info("  - Migrations executed: {}", result.migrationsExecuted);
+        logger.info("  - Target schema version: {}", result.targetSchemaVersion != null ? result.targetSchemaVersion : "N/A");
+        logger.info("  - Database: {}", result.database);
+        logger.info("========================================");
 
         return flyway;
     }
