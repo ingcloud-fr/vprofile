@@ -332,11 +332,6 @@ public class UserController {
 
             // Crop to square and resize to 300x300
             logger.debug("Starting crop and resize operation");
-            BufferedImage squareImage = Thumbnails.of(originalImage)
-                .sourceRegion(x, y, size, size)  // Centered square crop
-                .size(300, 300)                   // Resize to 300x300
-                .asBufferedImage();
-            logger.debug("Crop and resize completed successfully");
 
             // Generate unique filename (always save as JPG)
             String filename = UUID.randomUUID().toString() + ".jpg";
@@ -364,12 +359,19 @@ public class UserController {
                 logger.info("Created upload directory: {}", uploadPath);
             }
 
-            // Save the cropped and resized image
+            // Save the cropped and resized image directly to file
             Path filePath = uploadPath.resolve(filename);
             logger.debug("Full file path: {}", filePath);
-            logger.debug("Saving image to disk");
+            logger.debug("Saving image to disk using Thumbnails.toFile()");
 
-            ImageIO.write(squareImage, "jpg", filePath.toFile());
+            // Use Thumbnails to write directly to file (more reliable than ImageIO.write)
+            Thumbnails.of(originalImage)
+                .sourceRegion(x, y, size, size)  // Centered square crop
+                .size(300, 300)                   // Resize to 300x300
+                .outputFormat("jpg")              // Force JPG format
+                .outputQuality(0.9)               // High quality (0.0 to 1.0)
+                .toFile(filePath.toFile());
+
             logger.info("Image saved successfully to: {}", filePath);
 
             // IMPORTANT: Store relative URL starting with /
