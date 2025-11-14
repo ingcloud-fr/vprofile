@@ -136,23 +136,10 @@ public class UserController {
 //    }
 
     private void updateUserDetails(User user, User userForm) {
-        user.setUsername(userForm.getUsername());
+        // Only update modifiable fields (username is immutable)
         user.setUserEmail(userForm.getUserEmail());
-        user.setDateOfBirth(userForm.getDateOfBirth());
-        user.setFatherName(userForm.getFatherName());
-        user.setMotherName(userForm.getMotherName());
-        user.setGender(userForm.getGender());
-        user.setLanguage(userForm.getLanguage());
-        user.setMaritalStatus(userForm.getMaritalStatus());
-        user.setNationality(userForm.getNationality());
         user.setPermanentAddress(userForm.getPermanentAddress());
-        user.setTempAddress(userForm.getTempAddress());
-        user.setPhoneNumber(userForm.getPhoneNumber());
-        user.setSecondaryPhoneNumber(userForm.getSecondaryPhoneNumber());
-        user.setPrimaryOccupation(userForm.getPrimaryOccupation());
-        user.setSecondaryOccupation(userForm.getSecondaryOccupation());
         user.setSkills(userForm.getSkills());
-        user.setWorkingExperience(userForm.getWorkingExperience());
     }
 
     private static String generateString() {

@@ -124,14 +124,14 @@
                         </div>
                         <div class="media-body">
                             <hr>
-                            <h3><strong>Bio</strong></h3>
+                            <h3><strong>Email</strong></h3>
                             <p>
                                 <c:choose>
-                                    <c:when test="${not empty currentUser.skills}">
-                                        ${currentUser.skills}
+                                    <c:when test="${not empty currentUser.userEmail}">
+                                        <i class="fa fa-envelope"></i> ${currentUser.userEmail}
                                     </c:when>
                                     <c:otherwise>
-                                        <em>No bio information yet. Update your profile to add one!</em>
+                                        <em>Not specified</em>
                                     </c:otherwise>
                                 </c:choose>
                             </p>
@@ -140,7 +140,7 @@
                             <p>
                                 <c:choose>
                                     <c:when test="${not empty currentUser.permanentAddress}">
-                                        ${currentUser.permanentAddress}
+                                        <i class="fa fa-map-marker"></i> ${currentUser.permanentAddress}
                                     </c:when>
                                     <c:otherwise>
                                         <em>Not specified</em>
@@ -148,26 +148,14 @@
                                 </c:choose>
                             </p>
                             <hr>
-                            <h3><strong>Gender</strong></h3>
-                            <p>
+                            <h3><strong>Bio</strong></h3>
+                            <p style="white-space: pre-wrap;">
                                 <c:choose>
-                                    <c:when test="${not empty currentUser.gender}">
-                                        ${currentUser.gender}
+                                    <c:when test="${not empty currentUser.skills}">
+                                        ${currentUser.skills}
                                     </c:when>
                                     <c:otherwise>
-                                        <em>Not specified</em>
-                                    </c:otherwise>
-                                </c:choose>
-                            </p>
-                            <hr>
-                            <h3><strong>Birthday</strong></h3>
-                            <p>
-                                <c:choose>
-                                    <c:when test="${not empty currentUser.dateOfBirth}">
-                                        ${currentUser.dateOfBirth}
-                                    </c:when>
-                                    <c:otherwise>
-                                        <em>Not specified</em>
+                                        <em>No bio information yet. Update your profile to add one!</em>
                                     </c:otherwise>
                                 </c:choose>
                             </p>
