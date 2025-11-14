@@ -249,6 +249,13 @@
             <version>2.0.0</version>
         </dependency>
 
+        <!-- Thumbnailator for image cropping and resizing -->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.19</version>
+        </dependency>
+
     </dependencies>
 
 
