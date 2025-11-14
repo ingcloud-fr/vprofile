@@ -68,6 +68,9 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_started
+    volumes:
+      # Volume pour la persistence des photos de profil uploadées
+      - profile-images:/usr/local/tomcat/webapps/ROOT/resources/Images/profiles
     environment:
       # MySQL Configuration
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/accounts
@@ -88,3 +91,4 @@ services:
 volumes:
   mysql-data:
   es-data:
+  profile-images:

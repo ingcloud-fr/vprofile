@@ -172,6 +172,54 @@
 
 <div style="padding-top:50px;">.</div>
 
+<!-- Messages de feedback -->
+<div class="container-fluid">
+    <c:if test="${param.success == 'photoUploaded'}">
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <i class="fa fa-check-circle"></i> Photo de profil mise à jour avec succès !
+        </div>
+    </c:if>
+
+    <c:if test="${param.error == 'emptyFile'}">
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <i class="fa fa-exclamation-triangle"></i> Aucun fichier sélectionné
+        </div>
+    </c:if>
+
+    <c:if test="${param.error == 'invalidType'}">
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <i class="fa fa-exclamation-triangle"></i> Type de fichier non supporté (images uniquement)
+        </div>
+    </c:if>
+
+    <c:if test="${param.error == 'fileTooLarge'}">
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <i class="fa fa-exclamation-triangle"></i> Fichier trop volumineux (maximum 5 MB)
+        </div>
+    </c:if>
+
+    <c:if test="${param.error == 'uploadFailed'}">
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <i class="fa fa-exclamation-triangle"></i> Échec de l'upload. Veuillez réessayer.
+        </div>
+    </c:if>
+</div>
+
 <!-- Layout 2 colonnes : Profil à gauche, Timeline à droite -->
 <div class="row">
     <!-- COLONNE GAUCHE : Profil utilisateur -->
@@ -180,7 +228,19 @@
             <div class="panel-body">
                 <div class="media">
                     <div align="center">
-                        <img class="thumbnail img-responsive" src="${contextPath}/resources/Images/user/user.png" width="300px" height="300px">
+                        <c:choose>
+                            <c:when test="${not empty currentUser.profileImg}">
+                                <img class="thumbnail img-responsive" src="${contextPath}${currentUser.profileImg}" width="300px" height="300px" alt="Photo de profil">
+                            </c:when>
+                            <c:otherwise>
+                                <img class="thumbnail img-responsive" src="${contextPath}/resources/Images/user/user.png" width="300px" height="300px" alt="Avatar par défaut">
+                            </c:otherwise>
+                        </c:choose>
+                        <div style="margin-top: 15px;">
+                            <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#uploadPhotoModal">
+                                <i class="fa fa-camera"></i> Changer la photo
+                            </a>
+                        </div>
                     </div>
                     <div class="media-body">
                         <hr>
@@ -319,6 +379,44 @@
     </div>
 </div>
 
+<!-- Modal d'upload de photo de profil -->
+<div class="modal fade" id="uploadPhotoModal" tabindex="-1" role="dialog" aria-labelledby="uploadPhotoModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="uploadPhotoModalLabel">
+                    <i class="fa fa-camera"></i> Changer la photo de profil
+                </h4>
+            </div>
+            <form action="${contextPath}/profile/upload-photo" method="post" enctype="multipart/form-data" id="photoUploadForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="photoInput">Sélectionnez une image :</label>
+                        <input type="file" name="photo" id="photoInput" class="form-control" accept="image/*" required>
+                        <p class="help-block">
+                            <i class="fa fa-info-circle"></i> Formats acceptés : JPG, PNG, GIF. Taille maximum : 5 MB
+                        </p>
+                    </div>
+                    <div id="imagePreview" style="display: none; text-align: center; margin-top: 15px;">
+                        <img id="previewImg" src="" alt="Preview" style="max-width: 100%; max-height: 300px; border-radius: 4px;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <i class="fa fa-times"></i> Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="uploadBtn">
+                        <i class="fa fa-upload"></i> Uploader
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
@@ -326,6 +424,41 @@ $(function () {
 $(function () {
     $('[data-toggle="popover"]').popover()
 })
+
+// Preview de l'image avant upload
+document.getElementById('photoInput').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (file) {
+        // Vérifier la taille
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Le fichier est trop volumineux (maximum 5 MB)');
+            this.value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            return;
+        }
+
+        // Vérifier le type
+        if (!file.type.startsWith('image/')) {
+            alert('Veuillez sélectionner une image');
+            this.value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            return;
+        }
+
+        // Afficher l'aperçu
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('previewImg').src = e.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Fermer les alertes automatiquement après 5 secondes
+setTimeout(function() {
+    $('.alert').fadeOut('slow');
+}, 5000);
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="${contextPath}/resources/js/bootstrap.min.js"></script>
