@@ -417,6 +417,8 @@
     </div>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="${contextPath}/resources/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
@@ -460,8 +462,6 @@ setTimeout(function() {
     $('.alert').fadeOut('slow');
 }, 5000);
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="${contextPath}/resources/js/bootstrap.min.js"></script>
 
 </body>
 </html>
