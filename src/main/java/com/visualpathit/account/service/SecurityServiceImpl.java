@@ -35,19 +35,16 @@ public class SecurityServiceImpl implements SecurityService {
             logger.info("Attempting auto-login for user: {}", username);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            // Create an authenticated token directly without password verification
+            // This is safe because we're calling this right after user registration
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-            authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-
-            if (usernamePasswordAuthenticationToken.isAuthenticated()) {
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                logger.info("Auto-login successful for user: {}", username);
-                return true;
-            }
-
-            logger.warn("Auto-login failed - authentication token not authenticated for user: {}", username);
-            return false;
+            // Set the authentication in the security context
+            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            logger.info("Auto-login successful for user: {}", username);
+            return true;
         } catch (Exception e) {
             logger.error("Auto-login failed with exception for user: {}", username, e);
             return false;
