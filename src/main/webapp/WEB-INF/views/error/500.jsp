@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>User Not Found</title>
+    <title>500 - Internal Server Error</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -54,10 +54,10 @@
 <body>
     <div class="container">
         <div class="icon">
-            <i class="fas fa-user-times"></i>
+            <i class="fas fa-exclamation-triangle"></i>
         </div>
-        <h1>User Not Found</h1>
-        <p>It seems we couldn't find your account. You can <a href="${pageContext.request.contextPath}/registration">create a new account</a> if you don't have one.</p>
+        <h1>500 - Internal Server Error</h1>
+        <p>Something went wrong on our end. Please try again later or <a href="${pageContext.request.contextPath}/welcome">go back to the home page</a>.</p>
     </div>
 </body>
 </html>

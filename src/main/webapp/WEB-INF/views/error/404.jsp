@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Not Found</title>
+    <title>404 - Page Not Found</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/main.css">
     <style>
         body {
@@ -26,7 +26,7 @@
     </style>
 </head>
 <body>
-    <h1>User Not Found</h1>
-    <p>The user you are looking for does not exist. Please try again or <a href="${pageContext.request.contextPath}/login">go back to the login page</a>.</p>
+    <h1>404 - Page Not Found</h1>
+    <p>The page you are looking for does not exist. Please try again or <a href="${pageContext.request.contextPath}/welcome">go back to the home page</a>.</p>
 </body>
 </html>

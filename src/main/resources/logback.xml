@@ -10,9 +10,9 @@
 
 	<!-- Enable DEBUG logging for UserController to see upload photo logs -->
 	<logger name="com.visualpathit.account.controller.UserController" level="DEBUG" />
+	<logger name="com.visualpathit.account.service.PostLikeService" level="DEBUG" />
 
 	<!-- Turn off all other logging for specific packages -->
-	<logger name="com.visualpathit.account.service" level="OFF" />
 	<logger name="com.visualpathit.account.validator" level="OFF" />
 	<logger name="org.springframework" level="OFF" />
 	<logger name="org.hibernate" level="OFF" />
@@ -21,7 +21,7 @@
 
 	<!-- Root logging configuration -->
 	<root>
-		<level value="WARN" />
+		<level value="ERROR" />
 		<appender-ref ref="STDOUT" />
 	</root>
 

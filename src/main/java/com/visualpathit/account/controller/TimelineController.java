@@ -2,6 +2,7 @@ package com.visualpathit.account.controller;
 
 import com.visualpathit.account.model.Post;
 import com.visualpathit.account.model.User;
+import com.visualpathit.account.service.PostLikeService;
 import com.visualpathit.account.service.PostService;
 import com.visualpathit.account.service.SecurityService;
 import com.visualpathit.account.service.UserService;
@@ -36,6 +37,9 @@ public class TimelineController {
 
     @Autowired
     private SecurityService securityService;
+
+    @Autowired
+    private PostLikeService postLikeService;
 
     /**
      * Redirect /timeline to /welcome (public timeline is now on welcome page)
@@ -104,6 +108,14 @@ public class TimelineController {
         // Get posts by current user with pagination
         Pageable pageable = PageRequest.of(page, PAGE_SIZE);
         Page<Post> postsPage = postService.findByAuthor(currentUser, pageable);
+
+        // Enrich each post with like information for the current user
+        final User finalCurrentUser = currentUser;
+        postsPage.getContent().forEach(post -> {
+            boolean isLiked = postLikeService.hasUserLiked(post, finalCurrentUser);
+            post.setLikedByCurrentUser(isLiked);
+            logger.debug("Post {} liked by {}: {}", post.getId(), finalCurrentUser.getUsername(), isLiked);
+        });
 
         model.addAttribute("posts", postsPage.getContent());
         model.addAttribute("currentPage", page);

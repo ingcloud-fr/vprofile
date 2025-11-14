@@ -1,6 +1,8 @@
 package com.visualpathit.account.controller;
 
+import com.visualpathit.account.model.Post;
 import com.visualpathit.account.model.User;
+import com.visualpathit.account.service.PostLikeService;
 import com.visualpathit.account.service.PostService;
 import com.visualpathit.account.service.ProducerService;
 import com.visualpathit.account.service.SecurityService;
@@ -54,6 +56,9 @@ public class UserController {
 
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private PostLikeService postLikeService;
 
     @Autowired
     private ServletContext servletContext;
@@ -124,8 +129,9 @@ public class UserController {
         String username = securityService.findLoggedInUsername();
         logger.info("Welcome page accessed by user: {}", username != null ? username : "anonymous");
 
+        User currentUser = null;
         if (username != null) {
-            User currentUser = userService.findByUsername(username);
+            currentUser = userService.findByUsername(username);
             if (currentUser != null) {
                 model.addAttribute("currentUser", currentUser);
                 logger.info("User profile loaded successfully for: {}", username);
@@ -138,7 +144,17 @@ public class UserController {
 
         // Get all posts with pagination for the public timeline
         Pageable pageable = PageRequest.of(page, PAGE_SIZE);
-        Page postsPage = postService.findAllPosts(pageable);
+        Page<Post> postsPage = postService.findAllPosts(pageable);
+
+        // Enrich each post with like information for the current user
+        if (currentUser != null) {
+            final User finalCurrentUser = currentUser;
+            postsPage.getContent().forEach(post -> {
+                boolean isLiked = postLikeService.hasUserLiked(post, finalCurrentUser);
+                post.setLikedByCurrentUser(isLiked);
+                logger.debug("Post {} liked by {}: {}", post.getId(), finalCurrentUser.getUsername(), isLiked);
+            });
+        }
 
         model.addAttribute("posts", postsPage.getContent());
         model.addAttribute("currentPage", page);
