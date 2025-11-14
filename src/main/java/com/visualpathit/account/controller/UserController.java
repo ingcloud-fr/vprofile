@@ -20,7 +20,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.validation.Valid;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +30,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
+import jakarta.servlet.http.HttpSession;
+import net.coobird.thumbnailator.Thumbnails;
 
 @Controller
 public class UserController {
@@ -231,7 +235,7 @@ public class UserController {
     }
 
     @PostMapping("/profile/upload-photo")
-    public String uploadPhoto(@RequestParam("photo") MultipartFile file) {
+    public String uploadPhoto(@RequestParam("photo") MultipartFile file, HttpSession session) {
         // Get current logged-in user
         String username = securityService.findLoggedInUsername();
         if (username == null) {
@@ -265,13 +269,29 @@ public class UserController {
         }
 
         try {
-            // Generate unique filename
-            String originalFilename = file.getOriginalFilename();
-            String extension = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            // Read the original image
+            BufferedImage originalImage = ImageIO.read(file.getInputStream());
+            if (originalImage == null) {
+                logger.error("Failed to read image file");
+                return "redirect:/welcome?error=uploadFailed";
             }
-            String filename = UUID.randomUUID().toString() + extension;
+
+            // Calculate dimensions for centered square crop
+            int width = originalImage.getWidth();
+            int height = originalImage.getHeight();
+            int size = Math.min(width, height);
+
+            int x = (width - size) / 2;
+            int y = (height - size) / 2;
+
+            // Crop to square and resize to 300x300
+            BufferedImage squareImage = Thumbnails.of(originalImage)
+                .sourceRegion(x, y, size, size)  // Centered square crop
+                .size(300, 300)                   // Resize to 300x300
+                .asBufferedImage();
+
+            // Generate unique filename (always save as JPG)
+            String filename = UUID.randomUUID().toString() + ".jpg";
 
             // Create upload directory if it doesn't exist
             // Use webapp directory for file storage
@@ -287,16 +307,19 @@ public class UserController {
                 logger.info("Created upload directory: {}", uploadPath);
             }
 
-            // Save file
+            // Save the cropped and resized image
             Path filePath = uploadPath.resolve(filename);
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            logger.info("File uploaded successfully: {}", filePath);
+            ImageIO.write(squareImage, "jpg", filePath.toFile());
+            logger.info("Cropped image saved successfully: {}", filePath);
 
             // Update user profile image URL
             String photoUrl = "/resources/Images/profiles/" + filename;
             user.setProfileImg(photoUrl);
             user.setProfileImgPath(filePath.toString());
             userService.save(user);
+
+            // IMPORTANT: Update session to refresh navbar photo
+            session.setAttribute("currentUser", user);
 
             logger.info("Profile photo updated successfully for user: {}", username);
             return "redirect:/welcome?success=photoUploaded";

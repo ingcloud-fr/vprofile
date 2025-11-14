@@ -36,6 +36,12 @@ public class UserServiceImpl implements UserService {
             userRoles.add(userRole);
         }
         user.setRoles(userRoles);
+
+        // Set default profile image if not already set
+        if (user.getProfileImg() == null || user.getProfileImg().isEmpty()) {
+            user.setProfileImg("/resources/Images/default-avatar.png");
+        }
+
         userRepository.save(user);
     }
 

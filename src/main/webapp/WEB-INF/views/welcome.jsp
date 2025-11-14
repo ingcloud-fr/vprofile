@@ -123,7 +123,14 @@
                                 <li class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                         <span class="user-avatar pull-left" style="margin-right: 8px; margin-top: -5px;">
-                                            <img src="${contextPath}/resources/Images/user/user.png" class="img-responsive img-circle" title="${pageContext.request.userPrincipal.name}" alt="${pageContext.request.userPrincipal.name}" width="30px" height="30px">
+                                            <c:choose>
+                                                <c:when test="${not empty currentUser.profileImg}">
+                                                    <img src="${contextPath}${currentUser.profileImg}" class="img-responsive img-circle user-avatar-small" title="${pageContext.request.userPrincipal.name}" alt="${pageContext.request.userPrincipal.name}" width="30px" height="30px">
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <img src="${contextPath}/resources/Images/default-avatar.png" class="img-responsive img-circle user-avatar-small" title="${pageContext.request.userPrincipal.name}" alt="${pageContext.request.userPrincipal.name}" width="30px" height="30px">
+                                                </c:otherwise>
+                                            </c:choose>
                                         </span>
                                         <span class="user-name">${pageContext.request.userPrincipal.name}</span>
                                         <b class="caret"></b>
@@ -133,7 +140,14 @@
                                             <div class="navbar-content">
                                                 <div class="row">
                                                     <div class="col-md-5">
-                                                        <img src="${contextPath}/resources/Images/user/user.png" alt="Alternate Text" class="img-responsive" width="120px" height="120px" />
+                                                        <c:choose>
+                                                            <c:when test="${not empty currentUser.profileImg}">
+                                                                <img src="${contextPath}${currentUser.profileImg}" alt="Photo de profil" class="img-responsive" width="120px" height="120px" />
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <img src="${contextPath}/resources/Images/default-avatar.png" alt="Avatar par défaut" class="img-responsive" width="120px" height="120px" />
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                         <p class="text-center small">
                                                             <a href="${contextPath}/upload">Change Photo</a>
                                                         </p>

@@ -215,3 +215,59 @@ blockquote {
     margin: 0 0 20px;
     position: relative;
 }
+
+/* ==================== PROFILE IMAGE STYLES ==================== */
+
+/* Large profile image in sidebar */
+.profile-img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 3px solid #ddd;
+}
+
+/* Small avatar in navbar dropdown */
+.user-avatar-small {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 8px;
+    border: 2px solid #fff;
+}
+
+/* Avatar in post headers */
+.post-author-avatar {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* Ensure thumbnails in sidebar are square and centered */
+.thumbnail.img-responsive {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Avatar in post cards (already styled inline but adding here for consistency) */
+.post-header .avatar {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #f0f0f0;
+}
+
+/* Dropdown menu avatar */
+.navbar-content img.img-responsive {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+}
