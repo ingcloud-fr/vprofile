@@ -25,6 +25,11 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public String findLoggedInUsername() {
+        // Check if authentication exists first to avoid NullPointerException
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            return null;
+        }
+
         Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userDetails instanceof UserDetails) {
             return ((UserDetails) userDetails).getUsername();
