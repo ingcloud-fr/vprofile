@@ -35,11 +35,31 @@ pipeline {
             steps {
                 sh 'mvn test'
             }
+            post {
+                always {
+                    // Publish JUnit test results
+                    junit testResults: '**/target/surefire-reports/*.xml', allowEmptyResults: false
+                }
+                failure {
+                    echo 'Unit tests failed! Pipeline aborted.'
+                    error('Unit tests must pass before proceeding.')
+                }
+            }
         }
 
 	stage('INTEGRATION TEST'){
             steps {
                 sh 'mvn verify -DskipUnitTests'
+            }
+            post {
+                always {
+                    // Publish integration test results
+                    junit testResults: '**/target/failsafe-reports/*.xml', allowEmptyResults: true
+                }
+                failure {
+                    echo 'Integration tests failed! Pipeline aborted.'
+                    error('Integration tests must pass before proceeding.')
+                }
             }
         }
 		
@@ -50,6 +70,32 @@ pipeline {
             post {
                 success {
                     echo 'Generated Analysis Result'
+                }
+                failure {
+                    echo 'Checkstyle violations found!'
+                    error('Code quality standards not met.')
+                }
+            }
+        }
+
+        stage('CODE COVERAGE REPORT'){
+            steps {
+                sh 'mvn jacoco:report'
+            }
+            post {
+                success {
+                    // Publish JaCoCo coverage report
+                    jacoco(
+                        execPattern: '**/target/jacoco.exec',
+                        classPattern: '**/target/classes',
+                        sourcePattern: '**/src/main/java',
+                        exclusionPattern: '**/test/**',
+                        minimumLineCoverage: '60',
+                        minimumBranchCoverage: '50',
+                        minimumComplexityCoverage: '50',
+                        changeBuildStatus: true
+                    )
+                    echo 'Code coverage report generated'
                 }
             }
         }
