@@ -188,6 +188,112 @@ open http://localhost:15672  # guest/guest
 curl http://localhost:9200
 ```
 
+## Health Check Endpoints (Kubernetes Ready) 🏥
+
+L'application expose des endpoints de santé pour l'orchestration Kubernetes et le monitoring.
+
+### Endpoints Disponibles
+
+| Endpoint | Type | Description | Retour |
+|----------|------|-------------|--------|
+| `GET /health` | **Liveness** | Vérifie que l'application est vivante | `{"status": "UP"}` |
+| `GET /ready` | **Readiness** | Vérifie que l'app est prête (MySQL OK) | `{"status": "UP", "database": "UP"}` |
+| `GET /version` | **Info** | Informations de version et build | `{"app": "facelink", "version": "1.0.0", "buildTime": "..."}` |
+
+### Caractéristiques
+
+✅ **Accès public** : Aucune authentification requise (autorisé dans Spring Security)
+✅ **Format JSON** : Retours en JSON pour parsing automatique
+✅ **Rapide** : `/health` répond en <10ms, `/ready` en <100ms
+✅ **Production-ready** : Timeout de 2s sur les checks de base de données
+
+### Tester les Endpoints
+
+```bash
+# Liveness probe - Application vivante ?
+curl http://localhost:8080/health
+# {"status":"UP"}
+
+# Readiness probe - Application prête à servir du trafic ?
+curl http://localhost:8080/ready
+# {"status":"UP","database":"UP"}
+
+# Version - Quelle version est déployée ?
+curl http://localhost:8080/version
+# {"app":"facelink","version":"1.0.0","buildTime":"2025-11-15T10:30:00Z"}
+```
+
+### Configuration Kubernetes
+
+Exemple de configuration de probes dans vos manifests K8s :
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: facelink
+spec:
+  containers:
+  - name: facelink
+    image: facelink:1.0.0
+    ports:
+    - containerPort: 8080
+
+    # Liveness probe - Redémarre le pod si non responsive
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: 8080
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+
+    # Readiness probe - Retire du service si non prêt
+    readinessProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+
+    # Startup probe - Donne du temps au démarrage (Flyway migrations)
+    startupProbe:
+      httpGet:
+        path: /ready
+        port: 8080
+      initialDelaySeconds: 0
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 30  # 30 * 10s = 5 minutes max pour démarrer
+```
+
+### Codes de Retour HTTP
+
+| Endpoint | Success | Failure | Signification |
+|----------|---------|---------|---------------|
+| `/health` | `200 OK` | - | Application process vivant |
+| `/ready` | `200 OK` | `503 Service Unavailable` | MySQL accessible ou non |
+| `/version` | `200 OK` | - | Toujours disponible |
+
+### Utilisation DevOps
+
+**GitOps (ArgoCD/Flux)** : Les probes sont automatiquement utilisées pour déterminer la santé du déploiement
+
+**Monitoring (Prometheus)** : Les endpoints peuvent être scrapés pour créer des métriques :
+```promql
+probe_success{endpoint="/ready"} == 0  # Alerte si readiness échoue
+```
+
+**CI/CD** : Vérifier la santé après déploiement :
+```bash
+# Attendre que l'app soit prête
+until curl -f http://localhost:8080/ready; do sleep 5; done
+echo "Application is ready!"
+```
+
 ## Structure du Projet
 
 ```
