@@ -64,7 +64,16 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         // Check if admin already exists
         User existingAdmin = userRepository.findByUsername(adminUsername);
         if (existingAdmin != null) {
-            logger.info("Admin user already exists, skipping initialization");
+            logger.info("Admin user already exists, FORCING password update for testing");
+            // TEMPORARY: Force password update to get correct BCrypt hash
+            String newHashedPassword = bCryptPasswordEncoder.encode(adminPassword);
+            existingAdmin.setPassword(newHashedPassword);
+            userRepository.save(existingAdmin);
+            logger.info("========================================");
+            logger.info("ADMIN PASSWORD UPDATED - USE THIS HASH IN MIGRATION:");
+            logger.info("Password: {}", adminPassword);
+            logger.info("BCrypt Hash: {}", newHashedPassword);
+            logger.info("========================================");
             alreadySetup = true;
             return;
         }
@@ -89,10 +98,17 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
 
         // Create admin user
         logger.info("Creating admin user: {}", adminUsername);
+        String hashedPassword = bCryptPasswordEncoder.encode(adminPassword);
         User admin = new User();
         admin.setUsername(adminUsername);
-        admin.setPassword(bCryptPasswordEncoder.encode(adminPassword));
+        admin.setPassword(hashedPassword);
         admin.setUserEmail(adminEmail);
+
+        logger.info("========================================");
+        logger.info("NEW ADMIN USER CREATED - USE THIS HASH IN MIGRATION:");
+        logger.info("Password: {}", adminPassword);
+        logger.info("BCrypt Hash: {}", hashedPassword);
+        logger.info("========================================");
 
         // Assign both ROLE_USER and ROLE_ADMIN
         Set<Role> adminRoles = new HashSet<>();
