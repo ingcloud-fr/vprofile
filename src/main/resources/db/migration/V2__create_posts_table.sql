@@ -2,7 +2,7 @@
 -- FLYWAY MIGRATION V2: Posts Table
 -- ============================================
 -- Description: Creates the posts table for user timeline/wall
--- Author: vProfile Team
+-- Author: Facelink Team
 -- Date: 2025-11-14
 -- ============================================
 

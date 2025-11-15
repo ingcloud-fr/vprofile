@@ -355,7 +355,7 @@ public class UserController {
 
             // Use dedicated external volume for uploads (persistent across container restarts)
             // This path is mounted as a Docker volume in docker-compose.yml
-            String uploadDirectory = "/var/lib/vprofile/uploads/profiles";
+            String uploadDirectory = "/var/lib/facelink/uploads/profiles";
             Path uploadPath = Paths.get(uploadDirectory);
             logger.debug("Upload directory path: {}", uploadPath);
             logger.debug("Upload directory exists: {}", Files.exists(uploadPath));

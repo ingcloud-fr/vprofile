@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 public class StaticResourceController {
 
     private static final Logger logger = LoggerFactory.getLogger(StaticResourceController.class);
-    private static final String UPLOAD_BASE_DIR = "/var/lib/vprofile/uploads";
+    private static final String UPLOAD_BASE_DIR = "/var/lib/facelink/uploads";
 
     /**
      * Serve profile images from /uploads/profiles/{filename}

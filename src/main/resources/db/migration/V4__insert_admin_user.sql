@@ -3,7 +3,7 @@
 -- ============================================
 -- Description: Inserts the default admin user with ROLE_ADMIN and ROLE_USER,
 --              and creates a welcome post from the admin
--- Author: vProfile Team
+-- Author: Facelink Team
 -- Date: 2025-11-14
 -- ============================================
 
@@ -18,7 +18,7 @@ VALUES (
     1,
     'admin',
     '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xD99JXfULWPmEziq',
-    'admin@vprofile.com'
+    'admin@facelink.com'
 );
 
 -- Assign ROLE_USER to admin
@@ -33,9 +33,9 @@ VALUES (1, 2);
 INSERT IGNORE INTO posts (id, content, author_id, created_at, likes_count)
 VALUES (
     1,
-    'Bienvenue sur vProfile ! 🎉
+    'Bienvenue sur Facelink ! 🎉
 
-vProfile est votre nouveau réseau social professionnel. Ici, vous pouvez partager vos expériences DevOps, échanger avec d''autres professionnels de l''IT, et découvrir les dernières tendances en automatisation et CI/CD.
+Facelink est votre nouveau réseau social professionnel. Ici, vous pouvez partager vos expériences DevOps, échanger avec d''autres professionnels de l''IT, et découvrir les dernières tendances en automatisation et CI/CD.
 
 N''hésitez pas à créer votre premier post, compléter votre profil, et commencer à construire votre réseau !
 

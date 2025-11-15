@@ -48,7 +48,7 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     @Value("${ADMIN_PASSWORD:admin123}")
     private String adminPassword;
 
-    @Value("${ADMIN_EMAIL:admin@vprofile.com}")
+    @Value("${ADMIN_EMAIL:admin@facelink.com}")
     private String adminEmail;
 
     private boolean alreadySetup = false;
@@ -113,8 +113,8 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     private void createAdminPosts(User admin) {
         logger.info("Creating welcome post from admin");
 
-        String welcomeMessage = "Bienvenue sur vProfile ! 🎉\n\n" +
-                "vProfile est votre nouveau réseau social professionnel. Ici, vous pouvez partager vos expériences DevOps, " +
+        String welcomeMessage = "Bienvenue sur Facelink ! 🎉\n\n" +
+                "Facelink est votre nouveau réseau social professionnel. Ici, vous pouvez partager vos expériences DevOps, " +
                 "échanger avec d'autres professionnels de l'IT, et découvrir les dernières tendances en automatisation et CI/CD.\n\n" +
                 "N'hésitez pas à créer votre premier post, compléter votre profil, et commencer à construire votre réseau !\n\n" +
                 "Astuce : Vous pouvez ajouter des images à vos posts en utilisant une URL d'image.\n\n" +

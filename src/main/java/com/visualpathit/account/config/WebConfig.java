@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
         // IMPORTANT: file:/// avec 3 slashes pour les chemins absolus
         registry
             .addResourceHandler("/uploads/**")
-            .addResourceLocations("file:///var/lib/vprofile/uploads/")
+            .addResourceLocations("file:///var/lib/facelink/uploads/")
             .setCachePeriod(3600);
 
         // Get the real path to webapp resources

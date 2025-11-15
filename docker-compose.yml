@@ -2,7 +2,7 @@ services:
   # Base de données MySQL
   mysql:
     image: mysql:8.0
-    container_name: vprofile-mysql
+    container_name: facelink-mysql
     environment:
       MYSQL_ROOT_PASSWORD: vpropassword
       MYSQL_DATABASE: accounts
@@ -21,14 +21,14 @@ services:
   # Cache Memcached
   memcached:
     image: memcached:alpine
-    container_name: vprofile-memcached
+    container_name: facelink-memcached
     ports:
       - "11211:11211"
 
   # Message Queue RabbitMQ
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: vprofile-rabbitmq
+    container_name: facelink-rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -44,7 +44,7 @@ services:
   # ElasticSearch
   elasticsearch:
     image: elasticsearch:7.17.18
-    container_name: vprofile-elasticsearch
+    container_name: facelink-elasticsearch
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -54,10 +54,10 @@ services:
     volumes:
       - es-data:/usr/share/elasticsearch/data
 
-  # Application vProfile (Tomcat)
+  # Application Facelink (Tomcat)
   app:
     build: .
-    container_name: vprofile-app
+    container_name: facelink-app
     ports:
       - "8080:8080"
     depends_on:
@@ -72,7 +72,7 @@ services:
     volumes:
       # Volume pour la persistence des photos de profil uploadées
       # Utilise un chemin externe dédié pour éviter les conflits avec le WAR déployé
-      - profile-images:/var/lib/vprofile/uploads/profiles
+      - profile-images:/var/lib/facelink/uploads/profiles
     environment:
       # MySQL Configuration
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/accounts

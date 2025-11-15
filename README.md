@@ -1,4 +1,4 @@
-# vProfile - Professional Social Network
+# Facelink - Professional Social Network
 
 [![Java](https://img.shields.io/badge/Java-17-orange)](https://www.oracle.com/java/)
 [![Spring](https://img.shields.io/badge/Spring-6.0-green)](https://spring.io/)
@@ -154,7 +154,7 @@ docker compose up -d
 Un utilisateur admin est automatiquement créé lors du premier démarrage :
 
 - **Username** : `admin`
-- **Email** : `admin@vprofile.com`
+- **Email** : `admin@facelink.com`
 - **Password** : `admin123`
 - **Roles** : `ROLE_USER`, `ROLE_ADMIN`
 
@@ -165,7 +165,7 @@ Cet utilisateur est créé via :
 ## Structure du Projet
 
 ```
-vprofile/
+facelink/
 ├── src/main/
 │   ├── java/com/visualpathit/account/
 │   │   ├── config/          # Configuration Spring

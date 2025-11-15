@@ -7,8 +7,8 @@
   tasks:
     - name: Download latest VProfile.war from nexus
       get_url:
-        url: "http://{{USER}}:{{PASS}}@{{nexusip}}:8081/repository/{{reponame}}/{{groupid}}/{{time}}/{{build}}/{{vprofile_version}}"
-        dest: "/tmp/vproapp-{{vprofile_version}}"
+        url: "http://{{USER}}:{{PASS}}@{{nexusip}}:8081/repository/{{reponame}}/{{groupid}}/{{time}}/{{build}}/{{facelink_version}}"
+        dest: "/tmp/vproapp-{{facelink_version}}"
       register: wardeploy
       tags:
        - deploy
@@ -55,9 +55,9 @@
 
       - name: Try deploy artifact else restore from previos old_ROOT
         block:
-         - name: Deploy vprofile artifact
+         - name: Deploy facelink artifact
            copy:
-             src: "/tmp/vproapp-{{vprofile_version}}"
+             src: "/tmp/vproapp-{{facelink_version}}"
              dest: /usr/local/tomcat8/webapps/ROOT.war
              remote_src: yes
            register: deploy_info

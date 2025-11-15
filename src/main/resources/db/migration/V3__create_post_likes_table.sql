@@ -2,7 +2,7 @@
 -- FLYWAY MIGRATION V3: Post Likes Table
 -- ============================================
 -- Description: Creates the post_likes table for tracking post likes
--- Author: vProfile Team
+-- Author: Facelink Team
 -- Date: 2025-11-14
 -- ============================================
 

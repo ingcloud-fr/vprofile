@@ -2,7 +2,7 @@
 -- FLYWAY MIGRATION V1: Initial Schema
 -- ============================================
 -- Description: Creates the base tables for users and roles
--- Author: vProfile Team
+-- Author: Facelink Team
 -- Date: 2025-11-14
 -- ============================================
 
