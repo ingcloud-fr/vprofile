@@ -89,6 +89,10 @@ services:
       # ElasticSearch Configuration
       - ELASTICSEARCH_HOST=elasticsearch
       - ELASTICSEARCH_PORT=9200
+      # Admin Account Configuration
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=admin123
+      - ADMIN_EMAIL=admin@facelink.com
 
 volumes:
   mysql-data:
