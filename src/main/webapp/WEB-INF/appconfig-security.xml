@@ -11,6 +11,11 @@
 		<intercept-url pattern="/registration" access="permitAll" />
 		<intercept-url pattern="/resources/**" access="permitAll" />
 
+		<!-- Health check endpoints for Kubernetes probes (no authentication) -->
+		<intercept-url pattern="/health" access="permitAll" />
+		<intercept-url pattern="/ready" access="permitAll" />
+		<intercept-url pattern="/version" access="permitAll" />
+
 		<!-- Protected pages (authentication required) -->
 		<intercept-url pattern="/welcome" access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/welcome/**" access="hasRole('ROLE_USER')" />
