@@ -34,31 +34,42 @@ public class ElasticSearchController {
     private UserService userService;
 
     @RequestMapping(value = "/user/elasticsearch", method = RequestMethod.GET)
-    public String insert(final Model model) throws IOException {
-        List<User> users = userService.getList();
+    public String insert(final Model model) {
+        try {
+            List<User> users = userService.getList();
 
-        try (RestHighLevelClient client = ElasticsearchUtil.getRestHighLevelClient()) {
-            for (User user : users) {
-                IndexRequest indexRequest = new IndexRequest("users", "_doc", String.valueOf(user.getId()))
-                        .source(XContentFactory.jsonBuilder()
-                                .startObject()
-                                .field("name", user.getUsername())
-                                .field("DOB", user.getDateOfBirth())
-                                .field("fatherName", user.getFatherName())
-                                .field("motherName", user.getMotherName())
-                                .field("gender", user.getGender())
-                                .field("nationality", user.getNationality())
-                                .field("phoneNumber", user.getPhoneNumber())
-                                .endObject());
+            try (RestHighLevelClient client = ElasticsearchUtil.getRestHighLevelClient()) {
+                if (client == null) {
+                    model.addAttribute("result", "Failed to connect to Elasticsearch. Please check if Elasticsearch is running.");
+                    return "elasticeSearchRes";
+                }
 
-                IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
-                String res = response.getResult().toString();
-                System.out.println(res);
+                for (User user : users) {
+                    IndexRequest indexRequest = new IndexRequest("users", "_doc", String.valueOf(user.getId()))
+                            .source(XContentFactory.jsonBuilder()
+                                    .startObject()
+                                    .field("name", user.getUsername())
+                                    .field("DOB", user.getDateOfBirth())
+                                    .field("fatherName", user.getFatherName())
+                                    .field("motherName", user.getMotherName())
+                                    .field("gender", user.getGender())
+                                    .field("nationality", user.getNationality())
+                                    .field("phoneNumber", user.getPhoneNumber())
+                                    .endObject());
+
+                    IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
+                    String res = response.getResult().toString();
+                    System.out.println(res);
+                }
             }
-        }
 
-        model.addAttribute("result", "Users indexed successfully");
-        return "elasticeSearchRes";
+            model.addAttribute("result", "Users indexed successfully in Elasticsearch");
+            return "elasticeSearchRes";
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("result", "Error indexing users: " + e.getMessage());
+            return "elasticeSearchRes";
+        }
     }
 
     @RequestMapping(value = "/rest/users/view/{id}", method = RequestMethod.GET)
