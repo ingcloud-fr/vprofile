@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -130,11 +133,22 @@ public class UserController {
         logger.info("Welcome page accessed by user: {}", username != null ? username : "anonymous");
 
         User currentUser = null;
+        boolean isAdmin = false;
+
         if (username != null) {
             currentUser = userService.findByUsername(username);
             if (currentUser != null) {
                 model.addAttribute("currentUser", currentUser);
-                logger.info("User profile loaded successfully for: {}", username);
+
+                // Check if user has ROLE_ADMIN using Spring Security (avoids lazy loading issues)
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                if (auth != null && auth.getAuthorities() != null) {
+                    isAdmin = auth.getAuthorities().stream()
+                        .anyMatch(grantedAuthority -> "ROLE_ADMIN".equals(grantedAuthority.getAuthority()));
+                }
+
+                model.addAttribute("isAdmin", isAdmin);
+                logger.info("User profile loaded successfully for: {} (isAdmin: {})", username, isAdmin);
             } else {
                 logger.error("User not found in database: {}", username);
             }

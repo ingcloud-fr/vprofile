@@ -10,6 +10,8 @@
 
 	<!-- Enable DEBUG logging for UserController to see upload photo logs -->
 	<logger name="com.visualpathit.account.controller.UserController" level="DEBUG" />
+	<logger name="com.visualpathit.account.controller.ElasticSearchController" level="DEBUG" />
+	<logger name="com.visualpathit.account.utils.ElasticsearchUtil" level="DEBUG" />
 	<logger name="com.visualpathit.account.service.PostLikeService" level="DEBUG" />
 
 	<!-- Enable INFO logging for Flyway migrations (pédagogique) -->
@@ -25,7 +27,7 @@
 
 	<!-- Root logging configuration -->
 	<root>
-		<level value="ERROR" />
+		<level value="INFO" />
 		<appender-ref ref="STDOUT" />
 	</root>
 

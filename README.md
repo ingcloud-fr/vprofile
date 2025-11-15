@@ -21,10 +21,10 @@
 - **Database Migrations**: Flyway 9.22 ✨
 - **Build Tool**: Maven 3.9
 - **View Technology**: JSP with JSTL
-- **Application Server**: Tomcat (embedded)
-- **Caching**: Memcached
-- **Message Queue**: RabbitMQ
-- **Search Engine**: ElasticSearch 7.10
+- **Application Server**: Tomcat 10.1
+- **Caching**: Memcached (alpine)
+- **Message Queue**: RabbitMQ 3 with Management UI
+- **Search Engine**: Elasticsearch 7.17.18
 
 ## Database Migration avec Flyway 🚀
 
@@ -45,7 +45,6 @@ Les migrations sont situées dans `src/main/resources/db/migration/` :
 - **V1__initial_schema.sql** - Tables `user`, `role`, `user_role` + rôles par défaut
 - **V2__create_posts_table.sql** - Table `posts` pour la timeline
 - **V3__create_post_likes_table.sql** - Table `post_likes` pour les likes
-- **V4__insert_admin_user.sql** - Utilisateur admin par défaut et post de bienvenue
 
 ### Configuration Flyway
 
@@ -121,8 +120,7 @@ docker compose logs app | grep -i flyway
 Flyway: Migrating schema `accounts` to version "1 - initial schema"
 Flyway: Migrating schema `accounts` to version "2 - create posts table"
 Flyway: Migrating schema `accounts` to version "3 - create post likes table"
-Flyway: Migrating schema `accounts` to version "4 - insert admin user"
-Flyway: Successfully applied 4 migrations to schema `accounts`
+Flyway: Successfully applied 3 migrations to schema `accounts`
 ```
 
 ### Fresh Start (Base de Données Vide)
@@ -149,18 +147,46 @@ docker compose up -d
   - Username: `admin`
   - Password: `admin123`
 
-## Utilisateur par Défaut
+## Utilisateur Admin
 
-Un utilisateur admin est automatiquement créé lors du premier démarrage :
+Un utilisateur admin est automatiquement créé au premier démarrage par `DataInitializer.java` :
 
 - **Username** : `admin`
 - **Email** : `admin@facelink.com`
 - **Password** : `admin123`
 - **Roles** : `ROLE_USER`, `ROLE_ADMIN`
 
-Cet utilisateur est créé via :
-1. Migration Flyway `V4__insert_admin_user.sql` (prioritaire)
-2. DataInitializer Java (backup si la migration échoue)
+L'admin a accès à un **panneau d'administration** avec des boutons de vérification système :
+- ✅ **Tous les Utilisateurs** - Liste tous les utilisateurs inscrits
+- ✅ **RabbitMQ** - Vérifie la connexion au service RabbitMQ
+- ✅ **Elasticsearch** - Indexe les utilisateurs dans Elasticsearch
+
+Ces boutons sont visibles **uniquement pour les utilisateurs avec ROLE_ADMIN**.
+
+## Services Backend
+
+L'application utilise plusieurs services Docker :
+
+| Service | Port | Accès | Description |
+|---------|------|-------|-------------|
+| **MySQL** | 3306 | `mysql://localhost:3306` | Base de données principale |
+| **RabbitMQ** | 5672, 15672 | http://localhost:15672 | Message queue + Management UI (guest/guest) |
+| **Memcached** | 11211 | `localhost:11211` | Cache en mémoire |
+| **Elasticsearch** | 9200, 9300 | http://localhost:9200 | Moteur de recherche |
+| **App (Tomcat)** | 8080 | http://localhost:8080 | Application web |
+
+### Vérifier les Services
+
+```bash
+# Voir l'état de tous les services
+docker compose ps
+
+# Accéder à RabbitMQ Management UI
+open http://localhost:15672  # guest/guest
+
+# Tester Elasticsearch
+curl http://localhost:9200
+```
 
 ## Structure du Projet
 
@@ -178,8 +204,7 @@ facelink/
 │   │   ├── db/migration/    # Migrations Flyway ✨
 │   │   │   ├── V1__initial_schema.sql
 │   │   │   ├── V2__create_posts_table.sql
-│   │   │   ├── V3__create_post_likes_table.sql
-│   │   │   └── V4__insert_admin_user.sql
+│   │   │   └── V3__create_post_likes_table.sql
 │   │   └── application.properties
 │   └── webapp/
 │       ├── WEB-INF/
