@@ -24,19 +24,25 @@ public class UserValidator implements Validator {
         User user = (User) o;
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "NotEmpty");
-        if (user.getUsername().length() < 5 || user.getUsername().length() > 32) {
+        // Check for null before calling .length() to avoid NullPointerException
+        if (user.getUsername() != null &&
+            (user.getUsername().length() < 5 || user.getUsername().length() > 32)) {
             errors.rejectValue("username", "Size.userForm.username");
         }
-        if (userService.findByUsername(user.getUsername()) != null) {
+        if (user.getUsername() != null && userService.findByUsername(user.getUsername()) != null) {
             errors.rejectValue("username", "Duplicate.userForm.username");
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "NotEmpty");
-        if (user.getPassword().length() < 8 || user.getPassword().length() > 32) {
+        // Check for null before calling .length() to avoid NullPointerException
+        if (user.getPassword() != null &&
+            (user.getPassword().length() < 8 || user.getPassword().length() > 32)) {
             errors.rejectValue("password", "Size.userForm.password");
         }
 
-        if (!user.getPasswordConfirm().equals(user.getPassword())) {
+        // Check for null before comparing passwords to avoid NullPointerException
+        if (user.getPasswordConfirm() != null && user.getPassword() != null &&
+            !user.getPasswordConfirm().equals(user.getPassword())) {
             errors.rejectValue("passwordConfirm", "Diff.userForm.passwordConfirm");
         }
     }
