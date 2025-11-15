@@ -72,7 +72,7 @@ class UserRepositoryIntegrationTest {
         // When
         User savedUser = userRepository.save(user);
         entityManager.flush();
-        User foundUser = userRepository.findById(savedUser.getId().orElse(null));
+        User foundUser = userRepository.findById(savedUser.getId()).orElse(null);
 
         // Then
         assertNotNull(foundUser);
@@ -116,7 +116,7 @@ class UserRepositoryIntegrationTest {
         entityManager.flush();
 
         // When
-        User foundUser = userRepository.findById(savedUser.getId().orElse(null));
+        User foundUser = userRepository.findById(savedUser.getId()).orElse(null);
 
         // Then
         assertNotNull(foundUser);
@@ -156,7 +156,7 @@ class UserRepositoryIntegrationTest {
         entityManager.flush();
         entityManager.clear(); // Clear persistence context to force fresh fetch
 
-        User updatedUser = userRepository.findById(savedUser.getId().orElse(null));
+        User updatedUser = userRepository.findById(savedUser.getId()).orElse(null);
 
         // Then
         assertNotNull(updatedUser);
@@ -198,7 +198,7 @@ class UserRepositoryIntegrationTest {
         entityManager.flush();
         entityManager.clear();
 
-        User foundUser = userRepository.findById(savedUser.getId().orElse(null));
+        User foundUser = userRepository.findById(savedUser.getId()).orElse(null);
 
         // Then
         assertNotNull(foundUser);
@@ -238,7 +238,7 @@ class UserRepositoryIntegrationTest {
         entityManager.flush();
         entityManager.clear();
 
-        User foundUser = userRepository.findById(savedUser.getId().orElse(null));
+        User foundUser = userRepository.findById(savedUser.getId()).orElse(null);
 
         // Then
         assertNotNull(foundUser);

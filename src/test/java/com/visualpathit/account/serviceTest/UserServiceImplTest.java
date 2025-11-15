@@ -172,7 +172,7 @@ class UserServiceImplTest {
     void testFindById_Success() {
         // Given
         long userId = 1L;
-        when(userRepository.findById(userId).orElse(null)).thenReturn(testUser);
+        when(userRepository.findById(userId)).thenReturn(testUser);
 
         // When
         User foundUser = userService.findById(userId);
