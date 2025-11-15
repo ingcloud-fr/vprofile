@@ -114,7 +114,7 @@
                             <a class="navbar-brand" href="#" style="margin-right: -8px; margin-top: -5px;">
                                 <img alt="Brand" src="${contextPath}/resources/Images/user/logo.png" width="30px" height="30px">
                             </a>
-                            <a class="navbar-brand" href="#">HKH Infotech</a>
+                            <a class="navbar-brand" href="#">Facelink</a>
                         </div>
                         <div class="navbar-collapse collapse">
                             <ul class="nav navbar-nav">
