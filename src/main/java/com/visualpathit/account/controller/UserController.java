@@ -130,11 +130,16 @@ public class UserController {
         logger.info("Welcome page accessed by user: {}", username != null ? username : "anonymous");
 
         User currentUser = null;
+        boolean isAdmin = false;
         if (username != null) {
             currentUser = userService.findByUsername(username);
             if (currentUser != null) {
                 model.addAttribute("currentUser", currentUser);
-                logger.info("User profile loaded successfully for: {}", username);
+                // Check if user has ROLE_ADMIN
+                isAdmin = currentUser.getRoles().stream()
+                    .anyMatch(role -> "ROLE_ADMIN".equals(role.getName()));
+                model.addAttribute("isAdmin", isAdmin);
+                logger.info("User profile loaded successfully for: {} (isAdmin: {})", username, isAdmin);
             } else {
                 logger.error("User not found in database: {}", username);
             }

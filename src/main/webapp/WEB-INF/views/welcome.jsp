@@ -353,6 +353,31 @@
             </div>
         </div>
 
+        <!-- Panneau d'administration (visible uniquement pour les admins) -->
+        <c:if test="${isAdmin}">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <i class="fa fa-cogs" aria-hidden="true"></i> Administration - Vérification des Services
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted">Vérifiez l'état des services backend de l'application</p>
+                    <div class="btn-group" role="group">
+                        <a href="${contextPath}/users" class="btn btn-success">
+                            <i class="fa fa-users" aria-hidden="true"></i> Tous les Utilisateurs
+                        </a>
+                        <a href="${contextPath}/user/rabbit" class="btn btn-success">
+                            <i class="fa fa-exchange" aria-hidden="true"></i> RabbitMQ
+                        </a>
+                        <a href="${contextPath}/user/elasticsearch" class="btn btn-success">
+                            <i class="fa fa-search" aria-hidden="true"></i> Elasticsearch
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </c:if>
+
         <!-- Formulaire de création de post -->
         <div class="post-create-box">
             <h4>Quoi de neuf ?</h4>
