@@ -64,11 +64,7 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         // Check if admin already exists
         User existingAdmin = userRepository.findByUsername(adminUsername);
         if (existingAdmin != null) {
-            logger.info("Admin user already exists, updating password to ensure it's correct");
-            // Update admin password to ensure it matches the expected value
-            existingAdmin.setPassword(bCryptPasswordEncoder.encode(adminPassword));
-            userRepository.save(existingAdmin);
-            logger.info("Admin password updated successfully");
+            logger.info("Admin user already exists, skipping initialization");
             alreadySetup = true;
             return;
         }
