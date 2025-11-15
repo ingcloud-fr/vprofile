@@ -72,12 +72,12 @@ class UserRepositoryIntegrationTest {
         // When
         User savedUser = userRepository.save(user);
         entityManager.flush();
-        User foundUser = userRepository.findById(savedUser.getId());
+        User foundUser = userRepository.findById(savedUser.getId().orElse(null));
 
         // Then
         assertNotNull(foundUser);
         assertEquals("testuser", foundUser.getUsername());
-        assertEquals("test@example.com", foundUser.getEmail());
+        assertEquals("test@example.com", foundUser.getUserEmail());
     }
 
     @Test
@@ -94,7 +94,7 @@ class UserRepositoryIntegrationTest {
         // Then
         assertNotNull(foundUser);
         assertEquals("johndoe", foundUser.getUsername());
-        assertEquals("john@example.com", foundUser.getEmail());
+        assertEquals("john@example.com", foundUser.getUserEmail());
     }
 
     @Test
@@ -116,7 +116,7 @@ class UserRepositoryIntegrationTest {
         entityManager.flush();
 
         // When
-        User foundUser = userRepository.findById(savedUser.getId());
+        User foundUser = userRepository.findById(savedUser.getId().orElse(null));
 
         // Then
         assertNotNull(foundUser);
@@ -150,18 +150,18 @@ class UserRepositoryIntegrationTest {
         entityManager.flush();
 
         // When
-        savedUser.setEmail("new@example.com");
-        savedUser.setUserProfileImageUrl("https://example.com/newavatar.jpg");
+        savedUser.setUserEmail("new@example.com");
+        savedUser.setProfileImg("https://example.com/newavatar.jpg");
         userRepository.save(savedUser);
         entityManager.flush();
         entityManager.clear(); // Clear persistence context to force fresh fetch
 
-        User updatedUser = userRepository.findById(savedUser.getId());
+        User updatedUser = userRepository.findById(savedUser.getId().orElse(null));
 
         // Then
         assertNotNull(updatedUser);
-        assertEquals("new@example.com", updatedUser.getEmail());
-        assertEquals("https://example.com/newavatar.jpg", updatedUser.getUserProfileImageUrl());
+        assertEquals("new@example.com", updatedUser.getUserEmail());
+        assertEquals("https://example.com/newavatar.jpg", updatedUser.getProfileImg());
     }
 
     @Test
@@ -177,7 +177,7 @@ class UserRepositoryIntegrationTest {
         userRepository.delete(savedUser);
         entityManager.flush();
 
-        User deletedUser = userRepository.findById(userId);
+        User deletedUser = userRepository.findById(userId).orElse(null);
 
         // Then
         assertNull(deletedUser);
@@ -198,7 +198,7 @@ class UserRepositoryIntegrationTest {
         entityManager.flush();
         entityManager.clear();
 
-        User foundUser = userRepository.findById(savedUser.getId());
+        User foundUser = userRepository.findById(savedUser.getId().orElse(null));
 
         // Then
         assertNotNull(foundUser);
@@ -231,18 +231,18 @@ class UserRepositoryIntegrationTest {
     void testSaveUserWithProfile() {
         // Given
         User user = createTestUser("profileuser", "profile@example.com");
-        user.setUserProfileImageUrl("https://example.com/avatar.jpg");
+        user.setProfileImg("https://example.com/avatar.jpg");
 
         // When
         User savedUser = userRepository.save(user);
         entityManager.flush();
         entityManager.clear();
 
-        User foundUser = userRepository.findById(savedUser.getId());
+        User foundUser = userRepository.findById(savedUser.getId().orElse(null));
 
         // Then
         assertNotNull(foundUser);
-        assertEquals("https://example.com/avatar.jpg", foundUser.getUserProfileImageUrl());
+        assertEquals("https://example.com/avatar.jpg", foundUser.getProfileImg());
     }
 
     @Test
@@ -250,7 +250,7 @@ class UserRepositoryIntegrationTest {
     void testSaveUserWithNullProfileImage() {
         // Given
         User user = createTestUser("nullprofile", "null@example.com");
-        user.setUserProfileImageUrl(null);
+        user.setProfileImg(null);
 
         // When
         User savedUser = userRepository.save(user);
@@ -258,7 +258,7 @@ class UserRepositoryIntegrationTest {
 
         // Then
         assertNotNull(savedUser);
-        assertNull(savedUser.getUserProfileImageUrl());
+        assertNull(savedUser.getProfileImg());
     }
 
     @Test
@@ -295,7 +295,7 @@ class UserRepositoryIntegrationTest {
     private User createTestUser(String username, String email) {
         User user = new User();
         user.setUsername(username);
-        user.setEmail(email);
+        user.setUserEmail(email);
         user.setPassword("encodedPassword123");
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);

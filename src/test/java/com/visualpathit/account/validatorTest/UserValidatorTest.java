@@ -39,7 +39,7 @@ class UserValidatorTest {
         testUser.setUsername("validuser");
         testUser.setPassword("validpassword123");
         testUser.setPasswordConfirm("validpassword123");
-        testUser.setEmail("valid@example.com");
+        testUser.setUserEmail("valid@example.com");
 
         errors = new BeanPropertyBindingResult(testUser, "user");
     }

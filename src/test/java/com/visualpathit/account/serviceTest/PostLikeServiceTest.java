@@ -49,7 +49,7 @@ class PostLikeServiceTest {
         testUser = new User();
         testUser.setId(1L);
         testUser.setUsername("testuser");
-        testUser.setEmail("test@example.com");
+        testUser.setUserEmail("test@example.com");
 
         // Setup test post
         testPost = new Post();
@@ -228,7 +228,7 @@ class PostLikeServiceTest {
     @DisplayName("Should return false when post is null (by entity)")
     void testHasUserLiked_ByEntity_NullPost() {
         // When
-        boolean result = postLikeService.hasUserLiked(null, testUser);
+        boolean result = postLikeService.hasUserLiked((Post) null, testUser);
 
         // Then
         assertFalse(result);

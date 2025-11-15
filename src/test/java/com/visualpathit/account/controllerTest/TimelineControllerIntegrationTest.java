@@ -82,7 +82,7 @@ class TimelineControllerIntegrationTest {
         // Create test user
         testUser = new User();
         testUser.setUsername("timelineuser");
-        testUser.setEmail("timeline@example.com");
+        testUser.setUserEmail("timeline@example.com");
         if (passwordEncoder != null) {
             testUser.setPassword(passwordEncoder.encode("password123"));
         } else {

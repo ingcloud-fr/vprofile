@@ -304,7 +304,7 @@ class AuthenticationSecurityTest {
         User existingUser = new User();
         existingUser.setUsername("existinguser");
         existingUser.setPassword("encodedPassword");
-        existingUser.setEmail("existing@example.com");
+        existingUser.setUserEmail("existing@example.com");
         Set<Role> roles = new HashSet<>();
         Role role = roleRepository.findByName("ROLE_USER");
         if (role != null) {

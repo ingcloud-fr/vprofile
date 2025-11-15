@@ -48,7 +48,7 @@ class PostServiceImplTest {
         testAuthor = new User();
         testAuthor.setId(1L);
         testAuthor.setUsername("testauthor");
-        testAuthor.setEmail("author@example.com");
+        testAuthor.setUserEmail("author@example.com");
 
         // Setup test post
         testPost = new Post();

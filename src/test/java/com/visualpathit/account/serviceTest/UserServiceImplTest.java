@@ -53,7 +53,7 @@ class UserServiceImplTest {
         testUser.setId(1L);
         testUser.setUsername("testuser");
         testUser.setPassword("password123");
-        testUser.setEmail("test@example.com");
+        testUser.setUserEmail("test@example.com");
 
         userRole = new Role();
         userRole.setId(1L);
@@ -126,7 +126,7 @@ class UserServiceImplTest {
     @DisplayName("Should update user profile")
     void testUpdate_Success() {
         // Given
-        testUser.setEmail("newemail@example.com");
+        testUser.setUserEmail("newemail@example.com");
         when(userRepository.save(testUser)).thenReturn(testUser);
 
         // When
@@ -172,7 +172,7 @@ class UserServiceImplTest {
     void testFindById_Success() {
         // Given
         long userId = 1L;
-        when(userRepository.findById(userId)).thenReturn(testUser);
+        when(userRepository.findById(userId).orElse(null)).thenReturn(testUser);
 
         // When
         User foundUser = userService.findById(userId);
