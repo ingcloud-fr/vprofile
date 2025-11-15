@@ -5,7 +5,7 @@ This application is configured for DevOps/DevSecOps/GitOps training. The test su
 
 ## Test Configuration
 
-### Enabled Tests (75 tests)
+### Active Tests (75 unit tests)
 Simple unit tests that validate core functionality:
 - `UserTest.java` - User model validation
 - `RoleTest.java` - Role model validation
@@ -17,13 +17,15 @@ Simple unit tests that validate core functionality:
 - `UserControllerTest.java` - Controller unit tests
 - `UserServiceImplTest.java` - User service unit tests
 
-### Disabled Tests (68 tests - in `_disabled` folder)
-Complex integration tests requiring full ApplicationContext:
-- `TimelineControllerIntegrationTest.java` - Timeline integration tests
-- `UserJourneyE2ETest.java` - End-to-end user journey tests
-- `UserRepositoryIntegrationTest.java` - Repository integration tests
-- `AuthenticationSecurityTest.java` - Security integration tests
-- `InjectionSecurityTest.java` - Security vulnerability tests
+### Removed Tests
+Complex integration tests have been removed for training simplicity:
+- Timeline integration tests (12 tests)
+- End-to-end user journey tests (10 tests)
+- Repository integration tests (14 tests)
+- Authentication security tests (16 tests)
+- Injection security tests (16 tests)
+
+These tests required full ApplicationContext, database connections, and complex infrastructure setup. They are available in Git history if needed for production use.
 
 ## Running Tests
 
@@ -46,12 +48,14 @@ For DevOps training purposes:
 3. Focuses on pipeline mechanics rather than comprehensive testing
 4. Tests complete in seconds instead of minutes
 
-## Re-enabling Integration Tests
+## Restoring Integration Tests
 
-If you need to run the full test suite, modify `pom.xml` and remove the exclusion:
+If you need the full test suite for production use, you can restore the deleted tests from Git history:
 
-```xml
-<excludes>
-    <exclude>**/_disabled/**/*.java</exclude>
-</excludes>
+```bash
+# Find the commit before deletion
+git log --oneline -- src/test/java/com/visualpathit/account/_disabled
+
+# Restore the tests from a specific commit
+git checkout <commit-hash> -- src/test/java/com/visualpathit/account/_disabled
 ```
