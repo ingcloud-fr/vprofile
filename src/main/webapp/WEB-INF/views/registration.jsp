@@ -71,37 +71,37 @@
         <div class="container-login100">
             <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-50">
                 <form:form modelAttribute="userForm" method="post" class="login100-form validate-form">
-                    <span class="login100-form-title p-b-30">Sign Up</span>
+                    <span class="login100-form-title p-b-30">Enregistrement</span>
 
                     <!-- Email field -->
                     <div class="wrap-input100 validate-input m-b-23" data-validate="Email is required">
-                        <span class="label-input100">Email ID</span>
-                        <form:input path="userEmail" class="input100" placeholder="Type your email id"/>
+                        <span class="label-input100">Email</span>
+                        <form:input path="userEmail" class="input100" placeholder="Entrez votre email"/>
                         <form:errors path="userEmail" cssClass="error"/>
                         <span class="focus-input100" data-symbol="&#xf206;"></span>
                     </div>
 
                     <!-- Username field -->
-                    <div class="wrap-input100 validate-input m-b-23" data-validate="Username is required">
-                        <span class="label-input100">Username</span>
-                        <form:input path="username" class="input100" placeholder="Type your username"/>
+                    <div class="wrap-input100 validate-input m-b-23" data-validate="Votre identifiant est nécessaire">
+                        <span class="label-input100">Identifiant</span>
+                        <form:input path="username" class="input100" placeholder="Entrez votre identifiant"/>
                         <form:errors path="username" cssClass="error"/>
                         <span class="focus-input100" data-symbol="&#xf206;"></span>
                     </div>
 
                     <!-- Password field -->
-                    <div class="wrap-input100 validate-input m-b-23" data-validate="Password is required">
-                        <span class="label-input100">Password</span>
-                        <form:password path="password" class="input100" placeholder="Type your password"/>
+                    <div class="wrap-input100 validate-input m-b-23" data-validate="Uun mot de passe est nécessaire">
+                        <span class="label-input100">Mot de passe</span>
+                        <form:password path="password" class="input100" placeholder="Entrez votre mot de passe"/>
                         <form:errors path="password" cssClass="error"/>
                         <span class="focus-input100" data-symbol="&#xf190;"></span>
                     </div>
 
                     <!-- Confirm Password field -->
-                    <div class="wrap-input100 validate-input m-b-23" data-validate="Confirm password is required">
-                        <span class="label-input100">Confirm Password</span>
+                    <div class="wrap-input100 validate-input m-b-23" data-validate="La confimation du mot de passe est nécessaire">
+                        <span class="label-input100">Confirmation du mot de passe</span>
                         <br>
-                        <form:password path="passwordConfirm" class="input100" placeholder="Confirm your password"/>
+                        <form:password path="passwordConfirm" class="input100" placeholder="Confirmez votre mot de passe"/>
                         <form:errors path="passwordConfirm" cssClass="error"/>
                         <span class="focus-input100" data-symbol="&#xf190;"></span>
                     </div>
@@ -110,14 +110,14 @@
                     <div class="container-login100-form-btn">
                         <div class="wrap-login100-form-btn">
                             <div class="login100-form-bgbtn"></div>
-                            <button class="login100-form-btn">Sign Up</button>
+                            <button class="login100-form-btn">S'inscrire</button>
                         </div>
                     </div>
 
                     <!-- Login link -->
                     <div class="flex-col-c p-t-155">
-                        <span class="txt1 p-b-17">Already have an account?</span>
-                        <a href="${contextPath}/login" class="txt2">Login</a>
+                        <span class="txt1 p-b-17">Vous avez déjà un compte?</span>
+                        <a href="${contextPath}/login" class="txt2">Connexion</a>
                     </div>
                 </form:form>
             </div>

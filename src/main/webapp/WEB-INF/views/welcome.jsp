@@ -315,7 +315,7 @@
                             </c:choose>
                         </p>
                         <hr>
-                        <h3><strong>Location</strong></h3>
+                        <h3><strong>Lieu</strong></h3>
                         <p>
                             <c:choose>
                                 <c:when test="${not empty currentUser.permanentAddress}">

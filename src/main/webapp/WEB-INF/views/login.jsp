@@ -106,15 +106,15 @@
                     </div>
                 </c:if>
 
-                <div class="wrap-input100 validate-input m-b-23" data-validate="Username is required">
-                    <span class="label-input100">Username</span>
-                    <input class="input100" type="text" name="username" placeholder="Type your username" required autofocus>
+                <div class="wrap-input100 validate-input m-b-23" data-validate="Un identifiant est nécessaire">
+                    <span class="label-input100">Identifiant</span>
+                    <input class="input100" type="text" name="username" placeholder="Entrez votre identifiant" required autofocus>
                     <span class="focus-input100" data-symbol="&#xf206;"></span>
                 </div>
 
-                <div class="wrap-input100 validate-input" data-validate="Password is required">
-                    <span class="label-input100">Password</span>
-                    <input class="input100" type="password" name="password" placeholder="Type your password" required>
+                <div class="wrap-input100 validate-input" data-validate="Mot de passe nécessaire">
+                    <span class="label-input100">Mot de passe</span>
+                    <input class="input100" type="password" name="password" placeholder="Entrez votre mot de passe" required>
                     <span class="focus-input100" data-symbol="&#xf190;"></span>
                 </div>
 
@@ -137,11 +137,11 @@
 
                 <div class="flex-col-c p-t-155">
                     <span class="txt1 p-b-17">
-                        Don't have an account?
+                        Pas encore de compte?
                     </span>
 
                     <a href="${contextPath}/registration" class="txt2">
-                        Sign Up
+                        S'incrire
                     </a>
                 </div>
             </form>
