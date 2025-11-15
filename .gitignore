@@ -1,7 +1,8 @@
 # ============================================
 # MAVEN
 # ============================================
-target/                    # ← Dossier de build Maven (comme node_modules)
+# Dossier de build Maven
+target/**                     
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
