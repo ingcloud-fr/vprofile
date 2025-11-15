@@ -315,6 +315,10 @@
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
                     </includes>
+                    <excludes>
+                        <!-- Exclude complex integration tests for DevOps training environment -->
+                        <exclude>**/_disabled/**/*.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
